@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ua.es</groupId>
-	<artifactId>iap-API</artifactId>
+	<artifactId>iap-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>iap-API</name>
+	<name>iap-api</name>
 	<description>Individual project for Engenharia de Software</description>
 	<url/>
 	<licenses>

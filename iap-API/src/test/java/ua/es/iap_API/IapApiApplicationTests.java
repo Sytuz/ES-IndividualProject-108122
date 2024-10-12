@@ -1,4 +1,4 @@
-package ua.es.iap_API;
+package ua.es.iap_api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
