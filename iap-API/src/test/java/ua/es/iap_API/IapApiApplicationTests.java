@@ -8,6 +8,7 @@ class IapApiApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// This test is empty because it is only used to check if the context loads
 	}
 
 }
