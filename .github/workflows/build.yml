@@ -7,6 +7,11 @@ on:
       - ESIP-*
   pull_request:
     types: [opened, synchronize, reopened]
+
+defaults:
+    run:
+        working-directory: ./iap-API
+
 jobs:
   build:
     name: Build and analyze
