@@ -1,27 +1,55 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.rounded-pill {
+  border-radius: 5px !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.tt-color {
+  color: rgb(253, 35, 78) !important;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.tt-bgcolor {
+  background-color: rgb(253, 35, 78) !important;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.tt-secondary {
+  color: #c6c9cc !important;
+}
+
+.tt-bg-secondary {
+  background-color: #c6c9cc !important;
+}
+
+.start-20 {
+  left: 20% !important;
+}
+
+.top-40 {
+  top: 40% !important;
+}
+
+.image-bg {
+  padding: 40px;
+  border-radius: 20%;
+  display: inline-block;
+  width: 180px;
+  height: 180px;
+}
+
+/* Hover effect for "Get Started" */
+.get-started-btn:hover {
+  background-color: rgb(219, 32, 70) !important; /* Darker color on hover */
+  transform: scale(1.05); /* Enlarge slightly */
+}
+
+/* Transition effect for Login and Register buttons */
+.login-button:hover {
+  background-color: rgb(219, 32, 70) !important; /* Darker color on hover for Login/Register */
+}
+
+.register-button:hover {
+  background-color: #eeeeee !important; /* Darker color on hover for Login/Register */
+}
+
+/* Ensure smooth transition for all buttons */
+.login-button, .register-button, .get-started-btn {
+  transition: all 0.3s ease;
 }
