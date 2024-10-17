@@ -1,27 +1,27 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.rounded-pill {
+  border-radius: 5px !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.tt-color {
+  color: rgb(253, 35, 78) !important;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.tt-bgcolor {
+  background-color: rgb(253, 35, 78) !important;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.tt-secondary {
+  color: #c6c9cc !important;
+}
+
+.tt-bg-secondary {
+  background-color: #c6c9cc !important;
+}
+
+.start-20 {
+  left: 20% !important;
+}
+
+.top-40 {
+  top: 40% !important;
 }
