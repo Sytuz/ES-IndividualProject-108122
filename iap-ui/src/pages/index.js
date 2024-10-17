@@ -13,7 +13,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="container shadow d-flex flex-column justify-content-center" style={{ height: "100vh" }}>
+      <div className="container d-flex flex-column justify-content-center" style={{ height: "100vh" }}>
         <div className="row justify-content-center text-center">
           <div className="col-md-3">
             <div className="image-bg" style={{ background: "linear-gradient(135deg, #fceabb, #f8b500)" }}>
@@ -42,21 +42,12 @@ export default function Home() {
         </div>
         <div className="row justify-content-center" style={{marginTop: "100px"}}>
           <div className="col-auto">
-            <Link href="login" className="nav-link py-3 px-5 px-lg-5 rounded-pill tt-bgcolor text-white fs-5 fw-bold">
+            <Link href="login" className="get-started-btn nav-link py-3 px-5 px-lg-5 rounded-pill tt-bgcolor text-white fs-5 fw-bold">
               Get Started
             </Link>
           </div>
         </div>
       </div>
-      <style jsx>{`
-        .image-bg {
-          padding: 40px;
-          border-radius: 50%;
-          display: inline-block;
-          width: 180px;
-          height: 180px;
-        }
-      `}</style>
     </main>
   );
 }
