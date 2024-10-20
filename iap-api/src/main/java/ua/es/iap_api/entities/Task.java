@@ -20,29 +20,31 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description")
     private String description;
 
     @Column(name = "priority")
+    @Enumerated(EnumType.STRING)
     private Priority priority;
 
-    @Column(name = "completion_status")
-    private String completionStatus;
+    @Column(name = "completion_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CompletionStatus completionStatus;
 
     @Column(name = "deadline")
     private LocalDateTime deadline;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
 }

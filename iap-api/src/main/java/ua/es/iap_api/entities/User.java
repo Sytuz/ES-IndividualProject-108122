@@ -20,19 +20,20 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "auth0_user_id")
-    private String auth0UserId;
+    @Column(name = "cognito_sub")
+    private String cognitoSub;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "username")
+    private String username;
 
-    @Column(name = "picture")
-    private String picture;
+    @Column(name = "authentication_method" , nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AuthenticationMethod authenticationMethod;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }

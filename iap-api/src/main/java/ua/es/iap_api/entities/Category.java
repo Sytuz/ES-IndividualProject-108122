@@ -20,16 +20,16 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
