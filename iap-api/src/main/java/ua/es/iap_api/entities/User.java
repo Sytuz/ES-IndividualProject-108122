@@ -17,7 +17,8 @@ import lombok.Setter;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq_gen")
+    @SequenceGenerator(name = "users_seq_gen", sequenceName = "users_seq")
     private Long id;
 
     @Column(name = "cognito_sub")
@@ -28,6 +29,9 @@ public class User {
 
     @Column(name = "username")
     private String username;
+
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "authentication_method" , nullable = false)
     @Enumerated(EnumType.STRING)

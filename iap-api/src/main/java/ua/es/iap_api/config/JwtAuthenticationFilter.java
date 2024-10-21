@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import ua.es.iap_api.services.JwtService;
-//import ua.es.iap_api.services.UserService;
+import ua.es.iap_api.services.UserService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,8 +24,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
+    private final UserService userService;
+
+    public JwtAuthenticationFilter(JwtService jwtService, UserService userService) {
         this.jwtService = jwtService;
+        this.userService = userService;
     }
 
     @Override
@@ -48,8 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // If not authenticated yet
         if (userEmail != null && !userEmail.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null) {
-            //UserDetails userDetails = userService.loadUserByEmail(userEmail);
-            UserDetails userDetails = null;
+            UserDetails userDetails = userService.loadUserByEmail(userEmail);
 
             if (jwtService.isTokenValid(jwt, userDetails) && !jwtService.isRefreshTokenValid(jwt)) {
                 
