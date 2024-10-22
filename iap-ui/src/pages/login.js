@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Head from 'next/head';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { API_URL } from '../../api_url';
@@ -10,9 +11,8 @@ export default function Login() {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
+    document.getElementById('login-error').classList.add('visually-hidden');
     try {
-
-      // API CALL POST
       fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
