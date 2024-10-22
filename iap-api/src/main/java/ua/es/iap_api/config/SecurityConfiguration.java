@@ -33,7 +33,7 @@ public class SecurityConfiguration {
         http.csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**").permitAll() // Allow access to Swagger UI
+            .requestMatchers("/swagger-ui/index.html", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll() // Allow access to Swagger UI
             .requestMatchers("/api/auth/**").permitAll() // Expose public part of the API
             .anyRequest().authenticated()
             )

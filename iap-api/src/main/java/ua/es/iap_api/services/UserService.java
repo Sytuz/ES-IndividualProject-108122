@@ -65,10 +65,6 @@ public class UserService {
     }
 
     public boolean isNewUserValid(User user) {
-        if (user == null || userExistsByEmail(user.getEmail())) {
-            return false;
-        }
-
         if (user.getUsername().length() < minUsernameLength || user.getUsername().length() > maxUsernameLength) {
             return false;
         }

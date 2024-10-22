@@ -1,7 +1,8 @@
 package ua.es.iap_api.controllers;
 
-import ua.es.iap_api.dtos.CreateUserDTO;
+import ua.es.iap_api.dtos.RegisterDTO;
 import ua.es.iap_api.dtos.LoginDTO;
+import ua.es.iap_api.entities.AuthenticationMethod;
 import ua.es.iap_api.entities.User;
 import ua.es.iap_api.services.UserService;
 import ua.es.iap_api.services.JwtService;
@@ -9,7 +10,6 @@ import ua.es.iap_api.services.JwtService;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,14 +41,14 @@ public class AuthenticationController {
         this.jwtService = jwtService;
     }
 
-    @Operation(summary = "Create a new user", description = "Creates a new user in the system")
+    @Operation(summary = "Register a user", description = "Creates a new user in the system")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
             @ApiResponse(responseCode = "400", description = "Invalid user data"),
             @ApiResponse(responseCode = "409", description = "User already exists")
     })
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@RequestBody CreateUserDTO newUser) {
+    public ResponseEntity<User> createUser(@RequestBody RegisterDTO newUser) {
         logger.info("Attempting to create a new user");
 
         // Create a new user object with the data from the request
@@ -56,6 +56,7 @@ public class AuthenticationController {
         user.setUsername(newUser.getUsername());
         user.setEmail(newUser.getEmail());
         user.setPassword(newUser.getPassword());
+        user.setAuthenticationMethod(AuthenticationMethod.CREDENTIALS);
 
         // Check data validity
         if (!userService.isNewUserValid(user)) {
@@ -69,9 +70,9 @@ public class AuthenticationController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
-        User createdUser = userService.createUser(user);
+        userService.createUser(user);
         logger.info("User created successfully");
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Operation(summary = "Login a user", description = "Logs in a user to the system")
