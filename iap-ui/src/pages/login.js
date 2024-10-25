@@ -97,7 +97,7 @@ export default function Login() {
             <button type="button" onClick={handleLogin} className="btn tt-bgcolor text-white w-100 mb-3 mt- fs-4 fw-bold login-button">Login</button>
           </form>
           <p className="text-center   ">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/register" className="text-black tt-color fw-bold">
               Register
             </Link>

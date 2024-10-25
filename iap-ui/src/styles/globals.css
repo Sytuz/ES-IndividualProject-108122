@@ -53,3 +53,25 @@
 .login-button, .register-button, .get-started-btn {
   transition: all 0.3s ease;
 }
+
+.darkbg {
+  background-color: #dddddd !important;
+}
+
+.task-item {
+  transition: transform 0.2s;
+}
+
+.task-item:hover {
+  transform: scale(1.02);
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
