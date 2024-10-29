@@ -33,6 +33,7 @@ public class AuthenticationController {
 
     private final UserService userService;
     private final JwtService jwtService;
+    
     private final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @Autowired

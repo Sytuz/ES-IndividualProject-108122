@@ -26,13 +26,16 @@ public class Task {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "priority")
+    @Column(name = "user_email", nullable = false)
+    private String userEmail;
+
+    @Column(name = "priority", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Priority priority;
+    private Priority priority = Priority.UNDEFINED;
 
     @Column(name = "completion_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private CompletionStatus completionStatus;
+    private CompletionStatus completionStatus = CompletionStatus.IDLE;
 
     @Column(name = "deadline")
     private LocalDateTime deadline;
@@ -44,7 +47,12 @@ public class Task {
     private LocalDateTime completedAt;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
+    public Task(String title, String description, String userEmail) {
+        this.title = title;
+        this.description = description;
+        this.userEmail = userEmail;
+    }
 }

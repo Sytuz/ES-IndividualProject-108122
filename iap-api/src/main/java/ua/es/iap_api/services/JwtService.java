@@ -28,6 +28,11 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
+    public boolean isAuthorizedUser(String userEmail, String token) {
+        String tokenUserEmail = extractSubject(token);
+        return tokenUserEmail != null && tokenUserEmail.equals(userEmail);
+    }    
+
     public String generateToken(UserDetails user) {
         return generateToken(new HashMap<>(), user, accessExpTime);
     }
@@ -62,7 +67,6 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
-
     }
 
     private SecretKey getSigningKey() {

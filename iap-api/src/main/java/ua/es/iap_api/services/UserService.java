@@ -1,6 +1,7 @@
 package ua.es.iap_api.services;
 
 import ua.es.iap_api.entities.User;
+import ua.es.iap_api.entities.Category;
 import ua.es.iap_api.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +24,28 @@ public class UserService {
 
     private UserRepository userRepository;
 
+    private CategoryService categoryService;
+
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CategoryService categoryService) {
         this.userRepository = userRepository;
+        this.categoryService = categoryService;
     }
 
     public User createUser(User user) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+
+        // Create a 'Default' category for the user
+        Category defaultCategory = new Category();
+        defaultCategory.setTitle("Default");
+        defaultCategory.setDescription("Default category");
+        defaultCategory.setUser(user);
+
+        User response = userRepository.save(user);
+        categoryService.save(defaultCategory);
+
+        return response;
     }
 
     public Optional<User> getUserByEmail(String email) {
@@ -65,18 +79,9 @@ public class UserService {
     }
 
     public boolean isNewUserValid(User user) {
-        if (user.getUsername().length() < minUsernameLength || user.getUsername().length() > maxUsernameLength) {
-            return false;
-        }
-
-        if (user.getEmail().length() < minEmailLength || user.getEmail().length() > maxEmailLength || !user.getEmail().matches("^(.+)@(.+)$")) {
-            return false;
-        }
-
-        if (user.getPassword().length() < minPasswordLength || user.getPassword().length() > maxPasswordLength) {
-            return false;
-        }
-
-        return true;
-    }
+        return user.getUsername().length() >= minUsernameLength && user.getUsername().length() <= maxUsernameLength
+                && user.getEmail().length() >= minEmailLength && user.getEmail().length() <= maxEmailLength
+                && user.getEmail().matches("^(.+)@(.+)$")
+                && user.getPassword().length() >= minPasswordLength && user.getPassword().length() <= maxPasswordLength;
+    }    
 }
