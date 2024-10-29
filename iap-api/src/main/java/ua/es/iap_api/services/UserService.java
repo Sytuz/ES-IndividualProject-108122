@@ -48,6 +48,15 @@ public class UserService {
         return response;
     }
 
+    public String getUsernameByEmail(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        return optionalUser.get().getUsername();
+    }
+
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
