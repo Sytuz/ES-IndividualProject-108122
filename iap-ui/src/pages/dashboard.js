@@ -22,11 +22,27 @@ const Dashboard = () => {
         { id: 3, title: 'Personal', description: 'Personal tasks and goals' },
     ]);
 
-    const [tasks, setTasks] = useState([
-        { id: 1, category: 'Work', title: 'Complete project report', status: 'Idle', priority: 'high', deadline: '2023-12-31' },
-        { id: 2, category: 'Personal', title: 'Buy groceries', status: 'Ongoing', priority: 'medium', deadline: '2023-10-15' },
-        { id: 3, category: 'Default', title: 'Read a book', status: 'Completed', priority: 'low', deadline: '2023-11-01' },
-    ]);
+    const [tasks, setTasks] = useState([]);
+
+    useEffect(() => {
+        const fetchTasks = async () => {
+            try {
+                const token = sessionStorage.getItem('sessionToken');
+                const response = await fetch(`${API_URL}/tasks`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                console.log('Tasks:', data.content);
+                setTasks(data.content);
+            } catch (error) {
+                console.error('Error fetching tasks:', error);
+            }
+        };
+
+        fetchTasks();
+    }, []);
 
     const handleEditCategory = (id, newTitle, newDescription) => {
         // Find the old title of the category being edited
@@ -115,7 +131,7 @@ const Dashboard = () => {
                                             category={task.category}
                                             id={task.id}
                                             title={task.title}
-                                            status={task.status}
+                                            status={task.completionStatus}
                                             priority={task.priority}
                                             deadline={task.deadline}
                                             description={task.description}

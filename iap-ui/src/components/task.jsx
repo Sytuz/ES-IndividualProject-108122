@@ -22,6 +22,9 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
     };
 
     const getPriorityClass = (priority) => {
+        if (!priority) {
+            return;
+        }
         switch (priority.toLowerCase()) {
             case 'high':
                 return 'bg-danger';
@@ -65,21 +68,25 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
 
             {/* Right Section - Task Meta Information */}
             <div className="task-meta d-flex align-items-center">
+                {/* Deadline */}
+                {deadline && (
+                    <div className="deadline d-flex align-items-center me-3">
+                        <i className="bi bi-calendar me-2" style={{ color: '#6c757d', fontSize: '1.2rem' }}></i>
+                        <span className="text-muted" style={{ fontSize: '1.1rem' }}>
+                            Due: <strong>{new Date(deadline).toLocaleString('en-GB')}</strong>
+                        </span>
+                    </div>
+                )}
+
                 {/* Task Status */}
                 <span className={`badge ${getStatusClass(status)} me-3`} style={{ fontWeight: '500', fontSize: '1rem', padding: '0.6em 1em', width: '112px', textAlign: 'center' }}>{status}</span>
 
                 {/* Task Priority */}
-                <span className={`badge ${getPriorityClass(priority)} me-3`} style={{ fontWeight: '500', fontSize: '1rem', padding: '0.6em 1em', width: '152px', textAlign: 'center' }}>
-                    {priority.charAt(0).toUpperCase() + priority.slice(1)} Priority
-                </span>
-
-                {/* Deadline */}
-                <div className="deadline d-flex align-items-center me-3">
-                    <i className="bi bi-calendar me-2" style={{ color: '#6c757d', fontSize: '1.2rem' }}></i>
-                    <span className="text-muted" style={{ fontSize: '1.1rem' }}>
-                        Deadline: <strong>{new Date(deadline).toLocaleString('en-GB')}</strong>
+                {priority !== 'UNDEFINED' && (
+                    <span className={`badge ${getPriorityClass(priority)} me-3`} style={{ fontWeight: '500', fontSize: '1rem', padding: '0.6em 1em', width: '152px', textAlign: 'center' }}>
+                        {priority.charAt(0).toUpperCase() + priority.slice(1)} Priority
                     </span>
-                </div>
+                )}
 
                 {/* Trigger Edit Modal */}
                 <button
