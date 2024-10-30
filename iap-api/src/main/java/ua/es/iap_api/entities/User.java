@@ -17,15 +17,11 @@ import lombok.Setter;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq_gen")
-    @SequenceGenerator(name = "users_seq_gen", sequenceName = "users_seq")
-    private Long id;
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
 
     @Column(name = "cognito_sub")
     private String cognitoSub;
-
-    @Column(name = "email", unique = true, nullable = false)
-    private String email;
 
     @Column(name = "username")
     private String username;

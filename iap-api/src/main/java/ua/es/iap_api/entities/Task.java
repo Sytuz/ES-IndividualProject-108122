@@ -50,9 +50,21 @@ public class Task {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    public Task(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
+
     public Task(String title, String description, String userEmail) {
         this.title = title;
         this.description = description;
         this.userEmail = userEmail;
+    }
+
+    public Task(String title, String description, String userEmail, Category category) {
+        this.title = title;
+        this.description = description;
+        this.userEmail = userEmail;
+        this.category = category;
     }
 }

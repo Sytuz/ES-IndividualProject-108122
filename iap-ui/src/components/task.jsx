@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
+import TaskModal from './TaskModal';
 
 const Task = ({ id, title, description, status, priority, deadline, category, categories, onEdit, onDelete }) => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [editedTitle, setEditedTitle] = useState(title);
-    const [editedDescription, setEditedDescription] = useState(description);
-    const [editedStatus, setEditedStatus] = useState(status);
-    const [editedPriority, setEditedPriority] = useState(priority);
-    const [editedDeadline, setEditedDeadline] = useState(deadline);
-    const [editedCategory, setEditedCategory] = useState(category);
 
-    const handleEdit = () => {
-        onEdit(id, editedTitle, editedDescription, editedStatus, editedPriority, editedDeadline, editedCategory);
+    const handleEdit = (editedData) => {
+        onEdit(id, editedData.title, editedData.description, editedData.status, editedData.priority, editedData.deadline, editedData.category);
         setShowEditModal(false);
     };
 
@@ -33,7 +28,7 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
             case 'low':
                 return 'bg-success';
             default:
-                return 'bg-secondary';
+                return 'tt-bg-secondary';
         }
     };
 
@@ -51,47 +46,41 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
     };
 
     return (
-        <div className="task-item border rounded p-3 mb-3 d-flex justify-content-between align-items-start shadow-sm" style={{ backgroundColor: '#f8f9fa' }}>
+        <div className="task-item border rounded p-3 mb-3 d-flex justify-content-between align-items-center shadow-sm" style={{ backgroundColor: '#f8f9fa', height: '55px' }}>
             {/* Left Section - Task Info (Horizontally Stacked) */}
             <div className="task-info d-flex align-items-center">
-                {/* Associated Category */}
-                <span className="badge bg-primary me-3" style={{ fontSize: '1rem', padding: '0.6em 1em', width: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{category}</span>
+                {/* Priority Indicator */}
+                <div className={`${getPriorityClass(priority)}`} style={{ display: 'inline-block', width: '10px', height: '55px', borderRadius: '0', marginRight: '15px' }}></div>
 
-                {/* Task ID */}
-                <span className="text-muted me-3" style={{ fontSize: '1.1rem', fontStyle: 'italic' }}>#{id}</span>
-
-                {/* Task Title */}
-                <h5 className="mb-0 fw-bold text-dark" style={{ maxWidth: '350px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '1.3rem' }}>
-                    {title}
-                </h5>
+                {/* Task Title and Category */}
+                <div className="d-flex flex-column">
+                    <h5 className="fw-bold text-dark mb-0" style={{ maxWidth: '350px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {title}
+                    </h5>
+                    <span className="text-muted" style={{ padding: '0.4em 0.8em', fontSize: '12px', fontStyle: 'italic', paddingTop: '2px', paddingBottom: '0px' }}>{category}</span>
+                </div>
             </div>
+
 
             {/* Right Section - Task Meta Information */}
             <div className="task-meta d-flex align-items-center">
                 {/* Deadline */}
                 {deadline && (
                     <div className="deadline d-flex align-items-center me-3">
-                        <i className="bi bi-calendar me-2" style={{ color: '#6c757d', fontSize: '1.2rem' }}></i>
-                        <span className="text-muted" style={{ fontSize: '1.1rem' }}>
+                        <i className="bi bi-calendar me-2" style={{ color: '#6c757d' }}></i>
+                        <span className="text-muted">
                             Due: <strong>{new Date(deadline).toLocaleString('en-GB')}</strong>
                         </span>
                     </div>
                 )}
 
                 {/* Task Status */}
-                <span className={`badge ${getStatusClass(status)} me-3`} style={{ fontWeight: '500', fontSize: '1rem', padding: '0.6em 1em', width: '112px', textAlign: 'center' }}>{status}</span>
-
-                {/* Task Priority */}
-                {priority !== 'UNDEFINED' && (
-                    <span className={`badge ${getPriorityClass(priority)} me-3`} style={{ fontWeight: '500', fontSize: '1rem', padding: '0.6em 1em', width: '152px', textAlign: 'center' }}>
-                        {priority.charAt(0).toUpperCase() + priority.slice(1)} Priority
-                    </span>
-                )}
+                <span className={`badge ${getStatusClass(status)} me-3`} style={{ fontWeight: '500', padding: '0.6em 1em', width: '112px', textAlign: 'center' }}>{status}</span>
 
                 {/* Trigger Edit Modal */}
                 <button
                     className="btn btn-outline-primary btn-sm me-2"
-                    style={{ borderRadius: '20px', fontSize: '1rem' }}
+                    style={{ borderRadius: '20px' }}
                     onClick={() => setShowEditModal(true)}
                 >
                     Edit
@@ -100,87 +89,22 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
                 {/* Trigger Delete Confirmation Modal */}
                 <button
                     className="btn btn-outline-danger btn-sm"
-                    style={{ borderRadius: '20px', fontSize: '1rem' }}
+                    style={{ borderRadius: '20px' }}
                     onClick={() => setShowDeleteModal(true)}
                 >
-                    Remove
+                    Delete
                 </button>
             </div>
 
-            {/* Edit Modal */}
-            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Edit Task</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group controlId="formTaskTitle">
-                            <Form.Label>Title</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={editedTitle}
-                                onChange={(e) => setEditedTitle(e.target.value)}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formTaskDescription" className="mt-3">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={2}
-                                value={editedDescription}
-                                onChange={(e) => setEditedDescription(e.target.value)}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formTaskStatus" className="mt-3">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Select
-                                value={editedStatus}
-                                onChange={(e) => setEditedStatus(e.target.value)}
-                            >
-                                <option value="Completed">Completed</option>
-                                <option value="Ongoing">Ongoing</option>
-                                <option value="Idle">Idle</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Form.Group controlId="formTaskPriority" className="mt-3">
-                            <Form.Label>Priority</Form.Label>
-                            <Form.Select
-                                value={editedPriority}
-                                onChange={(e) => setEditedPriority(e.target.value)}
-                            >
-                                <option value="High">High</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Low">Low</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Form.Group controlId="formTaskDeadline" className="mt-3">
-                            <Form.Label>Deadline</Form.Label>
-                            <Form.Control
-                                type="date"
-                                value={editedDeadline}
-                                onChange={(e) => setEditedDeadline(e.target.value)}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formTaskCategory" className="mt-3">
-                            <Form.Label>Category</Form.Label>
-                            <Form.Select
-                                value={editedCategory}
-                                onChange={(e) => setEditedCategory(e.target.value)}
-                            >
-                                {categories.map(cat => (
-                                    <option key={cat.id} value={cat.title}>
-                                        {cat.title}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowEditModal(false)}>Cancel</Button>
-                    <Button variant="primary" onClick={handleEdit}>Save Changes</Button>
-                </Modal.Footer>
-            </Modal>
+            {/* TaskModal for Editing */}
+            <TaskModal
+                show={showEditModal}
+                onClose={() => setShowEditModal(false)}
+                onSave={handleEdit}
+                initialData={{ title, description, status, priority, deadline, category }}
+                categories={categories}
+                isEditMode={true}
+            />
 
             {/* Delete Modal */}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>

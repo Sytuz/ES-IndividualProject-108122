@@ -1,7 +1,6 @@
 package ua.es.iap_api.services;
 
 import ua.es.iap_api.entities.User;
-import ua.es.iap_api.entities.Category;
 import ua.es.iap_api.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,28 +23,25 @@ public class UserService {
 
     private UserRepository userRepository;
 
-    private CategoryService categoryService;
-
     @Autowired
-    public UserService(UserRepository userRepository, CategoryService categoryService) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.categoryService = categoryService;
     }
 
     public User createUser(User user) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // Create a 'Default' category for the user
-        Category defaultCategory = new Category();
-        defaultCategory.setTitle("Default");
-        defaultCategory.setDescription("Default category");
-        defaultCategory.setUser(user);
+        return userRepository.save(user);
+    }
 
-        User response = userRepository.save(user);
-        categoryService.save(defaultCategory);
+    public String getUsernameByEmail(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            throw new UsernameNotFoundException("User not found");
+        }
 
-        return response;
+        return optionalUser.get().getUsername();
     }
 
     public Optional<User> getUserByEmail(String email) {

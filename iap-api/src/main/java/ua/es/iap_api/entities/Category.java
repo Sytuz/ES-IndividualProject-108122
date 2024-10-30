@@ -29,7 +29,11 @@ public class Category {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_email", nullable = false)
+    private String userEmail;
+
+    public Category(String title, String userEmail) {
+        this.title = title;
+        this.userEmail = userEmail;
+    }
 }

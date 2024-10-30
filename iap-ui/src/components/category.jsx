@@ -19,7 +19,7 @@ const Category = ({ title, description, onEdit, onDelete }) => {
     };
 
     return (
-        <div className="category-item border rounded p-3 mb-3 d-flex justify-content-between align-items-start shadow-sm" style={{ backgroundColor: '#f8f9fa' }}>
+        <div className="category-item border rounded p-3 mb-3 d-flex justify-content-between align-items-center shadow-sm" style={{ backgroundColor: '#f8f9fa', height: '55px' }}>
             {/* Category Info */}
             <div className="category-info d-flex align-items-center">
                 <h5 className="mb-0 fw-bold text-dark" style={{ maxWidth: '350px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '1.3rem' }}>
@@ -29,8 +29,8 @@ const Category = ({ title, description, onEdit, onDelete }) => {
 
             {/* Edit and Remove Buttons */}
             <div className="category-actions d-flex align-items-center">
-                <button className="btn btn-outline-primary btn-sm me-2" style={{ borderRadius: '20px', fontSize: '1rem' }} onClick={() => setShowEditModal(true)}>Edit</button>
-                <button className="btn btn-outline-danger btn-sm" style={{ borderRadius: '20px', fontSize: '1rem' }} onClick={() => setShowDeleteModal(true)}>Delete</button>
+                <button className="btn btn-outline-primary btn-sm me-2" style={{ borderRadius: '20px'}} onClick={() => setShowEditModal(true)}>Edit</button>
+                <button className="btn btn-outline-danger btn-sm" style={{ borderRadius: '20px'}} onClick={() => setShowDeleteModal(true)}>Delete</button>
             </div>
 
             {/* Edit Modal */}

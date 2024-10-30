@@ -9,6 +9,10 @@ import ua.es.iap_api.entities.Task;
 @Service
 public class TaskService {
 
+    private int minTitleLength = 3;
+    private int maxTitleLength = 50;
+    private int maxDescriptionLength = 255;
+
     private final TaskRepository taskRepository;
 
     public TaskService(TaskRepository taskRepository) {
@@ -39,7 +43,16 @@ public class TaskService {
         return taskRepository.existsById(id);
     }
 
+    public boolean isTaskValid(Task task) {
+        return (task.getTitle() == null || (task.getTitle().length() >= minTitleLength &&
+            task.getTitle().length() <= maxTitleLength)) &&
+            (task.getDescription() == null || task.getDescription().length() <= maxDescriptionLength);
+    }
+
     public Task save(Task task) {
+        if (!isTaskValid(task)) {
+            return null;
+        }
         return taskRepository.save(task);
     }
 
