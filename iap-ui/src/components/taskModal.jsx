@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 const TaskModal = ({ show, onClose, onSave, initialData = {}, categories, isEditMode = false }) => {
+    const [id, setId] = useState(initialData.id || null);
     const [title, setTitle] = useState(initialData.title || '');
     const [description, setDescription] = useState(initialData.description || '');
     const [status, setStatus] = useState(initialData.status || 'IDLE');
@@ -12,7 +13,7 @@ const TaskModal = ({ show, onClose, onSave, initialData = {}, categories, isEdit
     const [category, setCategory] = useState(initialData.category || '');
 
     const handleSave = () => {
-        onSave({ title, description, status, priority, deadline, category });
+        onSave({ id, title, description, status, priority, deadline, category });
         onClose();
     };
 
@@ -62,10 +63,16 @@ const TaskModal = ({ show, onClose, onSave, initialData = {}, categories, isEdit
                     </Form.Group>
                     <Form.Group controlId="formTaskCategory" className="mt-3">
                         <Form.Label>Category</Form.Label>
-                        <Form.Select value={category} onChange={(e) => setCategory(e.target.value)}>
+                        <Form.Select
+                            value={category.id || ''}
+                            onChange={(e) => {
+                                const selectedCategory = categories.find(cat => cat.id === Number(e.target.value));
+                                setCategory(selectedCategory || {});
+                            }}
+                        >
                             <option value=""></option>
                             {categories.map(cat => (
-                                <option key={cat.id} value={cat.title}>
+                                <option key={cat.id} value={cat.id}>
                                     {cat.title}
                                 </option>
                             ))}

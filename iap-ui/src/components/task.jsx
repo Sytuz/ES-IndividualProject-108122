@@ -7,7 +7,7 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const handleEdit = (editedData) => {
-        onEdit(id, editedData.title, editedData.description, editedData.status, editedData.priority, editedData.deadline, editedData.category);
+        onEdit(editedData);
         setShowEditModal(false);
     };
 
@@ -57,7 +57,7 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
                     <h5 className="fw-bold text-dark mb-0" style={{ maxWidth: '350px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {title}
                     </h5>
-                    <span className="text-muted" style={{ padding: '0.4em 0.8em', fontSize: '12px', fontStyle: 'italic', paddingTop: '2px', paddingBottom: '0px' }}>{category}</span>
+                    <span className="text-muted" style={{ padding: '0.4em 0.8em', fontSize: '12px', fontStyle: 'italic', paddingTop: '2px', paddingBottom: '0px' }}>{category?.title}</span>
                 </div>
             </div>
 
@@ -101,7 +101,7 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
                 show={showEditModal}
                 onClose={() => setShowEditModal(false)}
                 onSave={handleEdit}
-                initialData={{ title, description, status, priority, deadline, category }}
+                initialData={{ id, title, description, status, priority, deadline, category }}
                 categories={categories}
                 isEditMode={true}
             />
