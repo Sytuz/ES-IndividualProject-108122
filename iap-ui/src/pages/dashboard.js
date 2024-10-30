@@ -140,16 +140,43 @@ const Dashboard = () => {
         setCategories([...categories, newCategory]);
     };
 
-    const handleEditTask = (id, updatedTitle, updatedDescription, updatedStatus, updatedPriority, updatedDeadline, updatedCategory) => {
-        setTasks(tasks.map(task =>
-            task.id === id
-                ? { ...task, title: updatedTitle, description: updatedDescription, status: updatedStatus, priority: updatedPriority, deadline: updatedDeadline, category: updatedCategory }
-                : task
-        ));
+    {/* Function to edit a task */ }
+    const onEditTask = async (editedTaskData) => {
+        const sessionToken = sessionStorage.getItem('sessionToken');
+        console.log('Edited task data:', editedTaskData);
+        try {
+            const response = await fetch(`${API_URL}/tasks`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionToken}`
+                },
+                body: JSON.stringify(editedTaskData)
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Task edited:', data);
+                alert('Task edited successfully!');
+                fetchTasks(); // Fetch tasks again to update the list
+            } else {
+                // If the response code is 400, warn the user about invalid input
+                if (response.status === 400) {
+                    console.error('Invalid input for task edition');
+                    alert('Invalid input for task edition');
+                }
+                else if (response.status === 403) {
+                    console.error('Unauthorized to edit task');
+                    router.push('/login'); // Redirect to login if not authorized
+                }
+                console.error('Failed to edit task');
+            }
+        } catch (error) {
+            console.error('Error editing task:', error);
+        }
+
     };
 
-
-
+    {/* Function to delete a task */}
     const onDeleteTask = async (id) => {
         const sessionToken = sessionStorage.getItem('sessionToken');
         try {
@@ -183,6 +210,7 @@ const Dashboard = () => {
 
     };
 
+    {/* Function to create a task */}
     const onCreateTask = async (newTaskData) => {
         const sessionToken = sessionStorage.getItem('sessionToken');
         try {
@@ -249,7 +277,7 @@ const Dashboard = () => {
                                     {tasks.map(task => (
                                         <Task
                                             key={task.id}
-                                            category={task.category?.title}
+                                            category={task.category}
                                             id={task.id}
                                             title={task.title}
                                             status={task.completionStatus}
@@ -257,7 +285,7 @@ const Dashboard = () => {
                                             deadline={task.deadline}
                                             description={task.description}
                                             categories={categories}
-                                            onEdit={handleEditTask}
+                                            onEdit={onEditTask}
                                             onDelete={onDeleteTask}
                                         />
                                     ))}

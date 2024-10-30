@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -108,5 +109,33 @@ public class TaskController {
         }
         taskService.deleteById(taskId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Edit a user task", description = "Edits a task for the authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful edit", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid task data"),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+    })
+    @PutMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Task> editTask(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody Task task) {
+        
+        logger.info("Attempting to edit task for user: {}", userDetails.getUsername());
+
+        String userEmail = userDetails.getUsername(); // Extract email from token subject
+        if (task.getId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        Task oldTask = taskService.findById(task.getId());
+        if (oldTask == null || !oldTask.getUserEmail().equals(userEmail)) {
+            return ResponseEntity.badRequest().build();
+        }
+        task.setUserEmail(userEmail);
+        Task editedTask = taskService.save(task);
+        return ResponseEntity.ok(editedTask);
     }
 }
