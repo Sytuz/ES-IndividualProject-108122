@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -84,5 +85,28 @@ public class TaskController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(newTask);
+    }
+
+    @Operation(summary = "Delete a user task", description = "Deletes a task for the authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successful deletion"),
+            @ApiResponse(responseCode = "400", description = "Invalid task data"),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+    })
+    @DeleteMapping()
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> deleteTask(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody Long taskId) {
+        
+        logger.info("Attempting to delete task for user: {}", userDetails.getUsername());
+
+        String userEmail = userDetails.getUsername(); // Extract email from token subject
+        Task task = taskService.findById(taskId);
+        if (task == null || !task.getUserEmail().equals(userEmail)) {
+            return ResponseEntity.badRequest().build();
+        }
+        taskService.deleteById(taskId);
+        return ResponseEntity.noContent().build();
     }
 }
