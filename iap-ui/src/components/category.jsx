@@ -1,20 +1,21 @@
+// src/components/Category.js
+
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import CategoryModal from './CategoryModal'; // Import the new modal
 
-const Category = ({ title, description, onEdit, onDelete }) => {
+const Category = ({ id, title, description, onEdit, onDelete }) => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [editedTitle, setEditedTitle] = useState(title);
-    const [editedDescription, setEditedDescription] = useState(description);
     const [deleteTasks, setDeleteTasks] = useState(false); // Track whether to delete related tasks
 
-    const handleEdit = () => {
-        onEdit(editedTitle, editedDescription); // Pass updated data back to parent
+    const handleEdit = (editedData) => {
+        onEdit(editedData);
         setShowEditModal(false); // Close modal after saving
     };
 
     const handleDelete = () => {
-        onDelete(deleteTasks); // Pass deleteTasks option to parent
+        onDelete(id, deleteTasks); // Pass deleteTasks option to parent
         setShowDeleteModal(false); // Close modal after confirming deletion
     };
 
@@ -34,40 +35,12 @@ const Category = ({ title, description, onEdit, onDelete }) => {
             </div>
 
             {/* Edit Modal */}
-            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Edit Category</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group controlId="formCategoryTitle">
-                            <Form.Label>Title</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={editedTitle}
-                                onChange={(e) => setEditedTitle(e.target.value)}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formCategoryDescription" className="mt-3">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={3}
-                                value={editedDescription}
-                                onChange={(e) => setEditedDescription(e.target.value)}
-                            />
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowEditModal(false)}>
-                        Cancel
-                    </Button>
-                    <Button variant="primary" onClick={handleEdit}>
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <CategoryModal
+                show={showEditModal}
+                onClose={() => setShowEditModal(false)}
+                onSave={handleEdit}
+                initialData={{ id, title, description }} // Pass initial data for editing
+            />
 
             {/* Delete Modal */}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
