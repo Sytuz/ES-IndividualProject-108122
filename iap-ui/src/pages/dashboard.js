@@ -6,12 +6,14 @@ import Category from '@/components/category';
 import { useRouter } from 'next/router';
 import { API_URL } from '../../api_url';
 import TaskModal from '@/components/TaskModal';
+import CategoryModal from '@/components/CategoryModal';
 
 const Dashboard = () => {
     const router = useRouter();
     const [username, setUsername] = useState('');
 
-    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showTaskCreateModal, setShowTaskCreateModal] = useState(false);
+    const [showCategoryCreateModal, setShowCategoryCreateModal] = useState(false);
 
     // Get the username from the session token, to put on navbar
     useEffect(() => {
@@ -131,13 +133,43 @@ const Dashboard = () => {
         }
     };
 
-    const handleAddCategory = () => {
-        const newCategory = {
-            id: categories.length + 1,
-            title: `New Category ${categories.length + 1}`,
-            description: 'Description for new category',
-        };
-        setCategories([...categories, newCategory]);
+    {/* Function to create a category */ }
+    const onCreateCategory = async (newCategoryData) => {
+        const sessionToken = sessionStorage.getItem('sessionToken');
+        try {
+            const response = await fetch(`${API_URL}/categories`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionToken}`
+                },
+                body: JSON.stringify(newCategoryData)
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Category created:', data);
+                alert('Category created successfully!');
+                fetchCategories(); // Fetch categories again to update the list
+            } else {
+                // If the response code is 400, warn the user about invalid input
+                if (response.status === 400) {
+                    console.error('Invalid input for category creation');
+                    alert('Invalid input for category creation');
+                }
+                else if (response.status === 403) {
+                    console.error('Unauthorized to create category');
+                    router.push('/login'); // Redirect to login if not authorized
+                }
+                console.error('Failed to create category');
+            }
+        } catch (error) {
+            console.error('Error creating category:', error);
+        }
+    }
+
+    const handleCreateCategory = (newCategoryData) => {
+        onCreateCategory(newCategoryData);
+        setShowCategoryCreateModal(false);
     };
 
     {/* Function to edit a task */ }
@@ -176,7 +208,7 @@ const Dashboard = () => {
 
     };
 
-    {/* Function to delete a task */}
+    {/* Function to delete a task */ }
     const onDeleteTask = async (id) => {
         const sessionToken = sessionStorage.getItem('sessionToken');
         try {
@@ -210,7 +242,7 @@ const Dashboard = () => {
 
     };
 
-    {/* Function to create a task */}
+    {/* Function to create a task */ }
     const onCreateTask = async (newTaskData) => {
         const sessionToken = sessionStorage.getItem('sessionToken');
         try {
@@ -249,7 +281,7 @@ const Dashboard = () => {
             newTaskData.category = null;
         }
         onCreateTask(newTaskData);
-        setShowCreateModal(false);
+        setShowTaskCreateModal(false);
     };
 
     return (
@@ -291,18 +323,18 @@ const Dashboard = () => {
                                     ))}
                                     {/* Center the Load More button */}
                                     <div className="d-flex justify-content-center mt-2">
-                                        <button className="btn btn-outline-tt-color" onClick={() => fetchTasks(0, tasks.length + 12)} style={{height: '35px'}}>
+                                        <button className="btn btn-outline-tt-color" onClick={() => fetchTasks(0, tasks.length + 12)} style={{ height: '35px' }}>
                                             <span className="me-2">&#x25BC;</span>Load More
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                            <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => setShowCreateModal(true)}>
+                            <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => setShowTaskCreateModal(true)}>
                                 <span className="me-2">+</span>New Task
                             </button>
                             <TaskModal
-                                show={showCreateModal}
-                                onClose={() => setShowCreateModal(false)}
+                                show={showTaskCreateModal}
+                                onClose={() => setShowTaskCreateModal(false)}
                                 onSave={handleCreateTask}
                                 categories={categories}
                             />
@@ -317,7 +349,7 @@ const Dashboard = () => {
                                 <div className="card-body overflow-auto" style={{ maxHeight: '70vh' }}>
                                     {categories.map(category => (
                                         <Category
-                                            key={category.id}
+                                            id={category.id}
                                             title={category.title}
                                             description={category.description}
                                             onEdit={(newTitle, newDescription) => handleEditCategory(category.id, newTitle, newDescription)}
@@ -326,9 +358,14 @@ const Dashboard = () => {
                                     ))}
                                 </div>
                             </div>
-                            <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={handleAddCategory}>
+                            <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => setShowCategoryCreateModal(true)}>
                                 <span className="me-2">+</span>New Category
                             </button>
+                            <CategoryModal
+                                show={showCategoryCreateModal}
+                                onClose={() => setShowCategoryCreateModal(false)}
+                                onSave={handleCreateCategory}
+                            />
                         </div>
                     </div>
                 </div>

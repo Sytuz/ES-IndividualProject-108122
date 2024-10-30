@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CategoryService {
+
+    private int minTitleLength = 3;
+    private int maxTitleLength = 50;
+    private int maxDescriptionLength = 255;
     
     private CategoryRepository categoryRepository;
 
@@ -35,7 +39,16 @@ public class CategoryService {
         return categoryRepository.existsById(id);
     }
 
+    public boolean isCategoryValid(Category category) {
+        return (category.getTitle() == null || (category.getTitle().length() >= minTitleLength &&
+            category.getTitle().length() <= maxTitleLength)) &&
+            (category.getDescription() == null || category.getDescription().length() <= maxDescriptionLength);
+    }
+
     public Category save(Category category) {
+        if (!isCategoryValid(category)) {
+            return null;
+        }
         return categoryRepository.save(category);
     }
 

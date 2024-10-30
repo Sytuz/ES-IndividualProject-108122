@@ -2,7 +2,7 @@ package ua.es.iap_api.controllers;
 
 import ua.es.iap_api.services.CategoryService;
 import ua.es.iap_api.entities.Category;
-
+import ua.es.iap_api.entities.Task;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -60,5 +60,29 @@ public class CategoryController {
         String userEmail = userDetails.getUsername(); // Extract email from token subject
         Page<Category> categories = categoryService.findAllByUserEmail(userEmail, pageable);
         return ResponseEntity.ok(categories);
+    }
+
+    @Operation(summary = "Create a user category", description = "Creates a category for the authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successful creation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid category data"),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+    })
+    @PostMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Category> createCategory(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody Category category) {
+        
+        logger.info("Attempting to create a new category for user: {}", userDetails.getUsername());
+
+        String userEmail = userDetails.getUsername(); // Extract email from token subject
+        category.setUserEmail(userEmail);
+        Category newCategory = categoryService.save(category);
+        
+        if (newCategory == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(newCategory);
     }
 }
