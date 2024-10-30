@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -84,5 +85,33 @@ public class CategoryController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(newCategory);
+    }
+
+    @Operation(summary = "Edit a user category", description = "Edits a category for the authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful edit", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid category data"),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+    })
+    @PutMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Category> editCategory(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody Category category) {
+        
+        logger.info("Attempting to edit category for user: {}", userDetails.getUsername());
+
+        String userEmail = userDetails.getUsername(); // Extract email from token subject
+        if (category.getId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        Category oldCategory = categoryService.findById(category.getId());
+        if (oldCategory == null || !oldCategory.getUserEmail().equals(userEmail)) {
+            return ResponseEntity.badRequest().build();
+        }
+        category.setUserEmail(userEmail);
+        Category editedCategory = categoryService.save(category);
+        return ResponseEntity.ok(editedCategory);
     }
 }

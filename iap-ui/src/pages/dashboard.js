@@ -133,6 +133,42 @@ const Dashboard = () => {
         }
     };
 
+    {/* Function to edit a category */ }
+    const onEditCategory = async (editedCategoryData) => {
+        const sessionToken = sessionStorage.getItem('sessionToken');
+        console.log('Edited category data:', editedCategoryData);
+        try {
+            const response = await fetch(`${API_URL}/categories`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionToken}`
+                },
+                body: JSON.stringify(editedCategoryData)
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Category edited:', data);
+                alert('Category edited successfully!');
+                fetchCategories(); // Fetch categorys again to update the list
+            } else {
+                // If the response code is 400, warn the user about invalid input
+                if (response.status === 400) {
+                    console.error('Invalid input for category edition');
+                    alert('Invalid input for category edition');
+                }
+                else if (response.status === 403) {
+                    console.error('Unauthorized to edit category');
+                    router.push('/login'); // Redirect to login if not authorized
+                }
+                console.error('Failed to edit category');
+            }
+        } catch (error) {
+            console.error('Error editing category:', error);
+        }
+
+    };
+
     {/* Function to create a category */ }
     const onCreateCategory = async (newCategoryData) => {
         const sessionToken = sessionStorage.getItem('sessionToken');
@@ -352,7 +388,7 @@ const Dashboard = () => {
                                             id={category.id}
                                             title={category.title}
                                             description={category.description}
-                                            onEdit={(newTitle, newDescription) => handleEditCategory(category.id, newTitle, newDescription)}
+                                            onEdit={onEditCategory}
                                             onDelete={(deleteTasks) => handleDeleteCategory(category.id, deleteTasks)}
                                         />
                                     ))}
