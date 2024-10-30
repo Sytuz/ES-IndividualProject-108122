@@ -56,13 +56,13 @@ const Dashboard = () => {
     const emptyTask = { id: 0, category: '', title: '', status: '', priority: '', deadline: '' };
     const [taskToEdit, setTaskToEdit] = useState(emptyTask);
 
+    const [tasks, setTasks] = useState([]);
+
     const [categories, setCategories] = useState([
         { id: 1, title: 'Default', description: 'General tasks' },
         { id: 2, title: 'Work', description: 'Work-related tasks' },
         { id: 3, title: 'Personal', description: 'Personal tasks and goals' },
     ]);
-
-    const [tasks, setTasks] = useState([]);
 
     // Function to fetch tasks from the API
     const fetchTasks = async (page = 0, size = 6, sort = 'id,desc') => {

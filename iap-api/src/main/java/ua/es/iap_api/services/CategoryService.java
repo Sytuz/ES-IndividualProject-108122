@@ -5,6 +5,8 @@ import java.util.List;
 import ua.es.iap_api.repositories.CategoryRepository;
 import ua.es.iap_api.entities.Category;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,10 +31,6 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
-    public boolean categoryExistsByTitleAndUserId(String title, Long userId) {
-        return categoryRepository.findByTitleAndUserId(title, userId).isPresent();
-    }
-
     public boolean categoryExistsById(Long id) {
         return categoryRepository.existsById(id);
     }
@@ -49,7 +47,7 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-    public List<Category> findAllByUserId(Long userID) {
-        return categoryRepository.findAllByUserId(userID);
+    public Page<Category> findAllByUserEmail(String email, Pageable pageable) {
+        return categoryRepository.findAllByUserEmail(email, pageable);
     }
 }

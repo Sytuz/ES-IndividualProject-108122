@@ -60,4 +60,11 @@ public class Task {
         this.description = description;
         this.userEmail = userEmail;
     }
+
+    public Task(String title, String description, String userEmail, Category category) {
+        this.title = title;
+        this.description = description;
+        this.userEmail = userEmail;
+        this.category = category;
+    }
 }
