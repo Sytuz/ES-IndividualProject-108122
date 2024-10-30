@@ -148,8 +148,39 @@ const Dashboard = () => {
         ));
     };
 
-    const handleDeleteTask = (id) => {
-        setTasks(tasks.filter(task => task.id !== id));
+
+
+    const onDeleteTask = async (id) => {
+        const sessionToken = sessionStorage.getItem('sessionToken');
+        try {
+            const response = await fetch(`${API_URL}/tasks`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionToken}`
+                },
+                body: id
+            });
+            if (response.ok) {
+                console.log('Task deleted: ', id);
+                alert('Task deleted successfully!');
+                fetchTasks(); // Fetch tasks again to update the list
+            } else {
+                // If the response code is 400, warn the user about invalid input
+                if (response.status === 400) {
+                    console.error('Invalid input for task deletion');
+                    alert('Invalid input for task deletion');
+                }
+                else if (response.status === 403) {
+                    console.error('Unauthorized to delete task');
+                    router.push('/login'); // Redirect to login if not authorized
+                }
+                console.error('Failed to delete task');
+            }
+        } catch (error) {
+            console.error('Error delete task:', error);
+        }
+
     };
 
     const onCreateTask = async (newTaskData) => {
@@ -227,7 +258,7 @@ const Dashboard = () => {
                                             description={task.description}
                                             categories={categories}
                                             onEdit={handleEditTask}
-                                            onDelete={handleDeleteTask}
+                                            onDelete={onDeleteTask}
                                         />
                                     ))}
                                     {/* Center the Load More button */}
