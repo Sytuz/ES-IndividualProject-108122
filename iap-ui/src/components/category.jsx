@@ -19,7 +19,7 @@ const Category = ({ title, description, onEdit, onDelete }) => {
     };
 
     return (
-        <div className="category-item border rounded p-3 mb-3 d-flex justify-content-between align-items-start shadow-sm" style={{ backgroundColor: '#f8f9fa' }}>
+        <div className="category-item border rounded p-3 mb-3 d-flex justify-content-between align-items-center shadow-sm" style={{ backgroundColor: '#f8f9fa' }}>
             {/* Category Info */}
             <div className="category-info d-flex align-items-center">
                 <h5 className="mb-0 fw-bold text-dark" style={{ maxWidth: '350px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '1.3rem' }}>

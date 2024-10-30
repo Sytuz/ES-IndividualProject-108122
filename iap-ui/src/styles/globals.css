@@ -10,6 +10,17 @@
   background-color: rgb(253, 35, 78) !important;
 }
 
+.btn-outline-tt-color {
+  color: rgb(253, 35, 78) !important;
+  border: 1px solid rgb(253, 35, 78) !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-tt-color:hover {
+  background-color: rgb(253, 35, 78) !important;
+  color: white !important;
+}
+
 .tt-secondary {
   color: #c6c9cc !important;
 }

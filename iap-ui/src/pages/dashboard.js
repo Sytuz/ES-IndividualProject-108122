@@ -1,11 +1,51 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Navbar from '@/components/navbar';
-import { API_URL } from '../../api_url';
 import Task from '@/components/task';
 import Category from '@/components/category';
+import { useRouter } from 'next/router';
+import { API_URL } from '../../api_url';
+import TaskModal from '@/components/TaskModal';
 
 const Dashboard = () => {
+    const router = useRouter();
+    const [username, setUsername] = useState('');
+
+    const [showCreateModal, setShowCreateModal] = useState(false);
+
+    // Get the username from the session token, to put on navbar
+    useEffect(() => {
+        const sessionToken = sessionStorage.getItem('sessionToken');
+        const fetchUsername = async () => {
+            try {
+                const response = await fetch(`${API_URL}/users/username`, {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${sessionToken}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const username = await response.text(); // Directly parse the plain text response
+                    setUsername(username);
+                } else {
+                    console.error('Failed to fetch username');
+                    router.push('/login'); // Redirect to login if not authorized
+                }
+            } catch (error) {
+                console.error('Error fetching username:', error);
+                router.push('/login'); // Redirect on error
+            }
+        };
+
+        if (sessionToken) {
+            fetchUsername();
+        } else {
+            router.push('/login');
+        }
+    }, []);
+
+    // Make the body a little darker
     useEffect(() => {
         document.body.classList.add('darkbg');
         return () => {
@@ -24,23 +64,26 @@ const Dashboard = () => {
 
     const [tasks, setTasks] = useState([]);
 
-    useEffect(() => {
-        const fetchTasks = async () => {
-            try {
-                const token = sessionStorage.getItem('sessionToken');
-                const response = await fetch(`${API_URL}/tasks`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const data = await response.json();
-                console.log('Tasks:', data.content);
-                setTasks(data.content);
-            } catch (error) {
-                console.error('Error fetching tasks:', error);
-            }
-        };
+    // Function to fetch tasks from the API
+    const fetchTasks = async (page = 0, size = 6, sort = 'id,desc') => {
+        const sessionToken = sessionStorage.getItem('sessionToken');
+        try {
+            const response = await fetch(`${API_URL}/tasks?page=${page}&size=${size}&sort=${sort}`, {
+                headers: {
+                    'Authorization': `Bearer ${sessionToken}`
+                }
+            });
+            const data = await response.json();
+            console.log('Tasks:', data.content);
+            setTasks(data.content || []);
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+            throw error;
+        }
+    };
 
+    // Fetch all tasks from the API on component mount
+    useEffect(() => {
         fetchTasks();
     }, []);
 
@@ -91,22 +134,51 @@ const Dashboard = () => {
         setTasks(tasks.filter(task => task.id !== id));
     };
 
+    const onCreateTask = async (newTaskData) => {
+        const sessionToken = sessionStorage.getItem('sessionToken');
+        try {
+            const response = await fetch(`${API_URL}/tasks`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionToken}`
+                },
+                body: JSON.stringify(newTaskData)
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Task created:', data);
+                alert('Task created successfully!');
+                fetchTasks(); // Fetch tasks again to update the list
+            } else {
+                // If the response code is 400, warn the user about invalid input
+                if (response.status === 400) {
+                    console.error('Invalid input for task creation');
+                    alert('Invalid input for task creation');
+                }
+                else if (response.status === 403) {
+                    console.error('Unauthorized to create task');
+                    router.push('/login'); // Redirect to login if not authorized
+                }
+                console.error('Failed to create task');
+            }
+        } catch (error) {
+            console.error('Error creating task:', error);
+        }
+    }
 
-    const handleAddTask = () => {
-        const newTask = {
-            id: tasks.length + 1,
-            category: 'Default',
-            title: `New Task ${tasks.length + 1}`,
-            status: 'Idle',
-            priority: 'low',
-            deadline: '2023-12-31',
-        };
-        setTasks([...tasks, newTask]);
+    const handleCreateTask = (newTaskData) => {
+        if (newTaskData.category === '') {
+            newTaskData.category = null;
+        }
+        onCreateTask(newTaskData);
+        setShowCreateModal(false);
     };
 
     return (
         <main>
-            <Navbar />
+            <Navbar
+                username={username} />
             <Head>
                 <title>TaskTracker | Dashboard</title>
                 <meta name="description" content="Task tracker application" />
@@ -140,11 +212,24 @@ const Dashboard = () => {
                                             onDelete={handleDeleteTask}
                                         />
                                     ))}
+                                    {/* Center the Load More button */}
+                                    <div className="d-flex justify-content-center mt-2">
+                                        <button className="btn btn-outline-tt-color" onClick={() => fetchTasks(0, tasks.length + 6)} style={{height: '35px'}}>
+                                            <span className="me-2">&#x25BC;</span>Load More
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <button className="btn btn-primary mt-2 align-self-end" onClick={handleAddTask}>
+                            <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => setShowCreateModal(true)}>
                                 <span className="me-2">+</span>New Task
                             </button>
+                            <TaskModal
+                                show={showCreateModal}
+                                onClose={() => setShowCreateModal(false)}
+                                onSave={handleCreateTask}
+                                categories={categories}
+                            />
+
                         </div>
                         {/* Categories Section */}
                         <div className="col-md-3 h-100 d-flex flex-column">
@@ -164,7 +249,7 @@ const Dashboard = () => {
                                     ))}
                                 </div>
                             </div>
-                            <button className="btn btn-primary mt-2 align-self-end" onClick={handleAddCategory}>
+                            <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={handleAddCategory}>
                                 <span className="me-2">+</span>New Category
                             </button>
                         </div>

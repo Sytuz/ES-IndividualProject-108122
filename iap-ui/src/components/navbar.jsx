@@ -4,14 +4,14 @@ import NavbarLanding from './NavbarLanding';
 import NavbarDashboard from './NavbarDashboard';
 import Link from 'next/link';
 
-const Navbar = () => {
+const Navbar = ({username}) => {
   const router = useRouter();
   const currentPath = router.pathname;
 
   return (
     <nav className="navbar navbar-expand-lg bg-light fixed-top shadow">
       <div className="container-fluid" style={{ width: '90%' }}>
-        <Link href="/" className="navbar-brand text-black fs-3 fw-bold">
+        <Link href="/" className="navbar-brand text-black fs-4 fw-bold">
           TaskTracker
         </Link>
         <button
@@ -28,7 +28,8 @@ const Navbar = () => {
         {currentPath === '/' ? (
           <NavbarLanding />
         ) : currentPath === '/dashboard' ? (
-          <NavbarDashboard />
+          <NavbarDashboard 
+            username={username} />
         ) : null}
       </div>
     </nav>

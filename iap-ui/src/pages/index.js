@@ -17,27 +17,27 @@ export default function Home() {
         <div className="row justify-content-center text-center">
           <div className="col-md-3">
             <div className="image-bg" style={{ background: "linear-gradient(135deg, #fceabb, #f8b500)" }}>
-              <Image src="/clipboard.png" alt="Clipboard made by Kiranshastry - Flaticon" width={100} height={100} />
+              <Image src="/clipboard.png" alt="Clipboard made by Kiranshastry - Flaticon" width={85} height={85} />
             </div>
-            <h4 className="mt-4">Create and manage tasks</h4>
+            <h5 className="mt-4">Create and manage tasks</h5>
           </div>
           <div className="col-md-3">
             <div className="image-bg" style={{ background: "linear-gradient(135deg, #d4fc79, #96e6a1)" }}>
-              <Image src="/categories.png" alt="Clipboard made by Kiranshastry - Flaticon" width={100} height={100} />
+              <Image src="/categories.png" alt="Clipboard made by Kiranshastry - Flaticon" width={85} height={85} />
             </div>
-            <h4 className="mt-4">Divide tasks into categories</h4>
+            <h5 className="mt-4">Divide tasks into categories</h5>
           </div>
           <div className="col-md-3">
             <div className="image-bg" style={{ background: "linear-gradient(135deg, #fbc2eb, #a6c1ee)" }}>
-              <Image src="/deadline.png" alt="Clipboard made by Kiranshastry - Flaticon" width={100} height={100} />
+              <Image src="/deadline.png" alt="Clipboard made by Kiranshastry - Flaticon" width={85} height={85} />
             </div>
-            <h4 className="mt-4">Set priorities and deadlines</h4>
+            <h5 className="mt-4">Set priorities and deadlines</h5>
           </div>
           <div className="col-md-3">
             <div className="image-bg" style={{ background: "linear-gradient(135deg, #ffecd2, #fcb69f)" }}>
-              <Image src="/filter.png" alt="Clipboard made by Kiranshastry - Flaticon" width={100} height={100} />
+              <Image src="/filter.png" alt="Clipboard made by Kiranshastry - Flaticon" width={85} height={85} />
             </div>
-            <h4 className="mt-4">Filter and sort as needed</h4>
+            <h5 className="mt-4">Filter and sort as needed</h5>
           </div>
         </div>
         <div className="row justify-content-center" style={{marginTop: "100px"}}>
