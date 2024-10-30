@@ -57,12 +57,7 @@ const Dashboard = () => {
     const [taskToEdit, setTaskToEdit] = useState(emptyTask);
 
     const [tasks, setTasks] = useState([]);
-
-    const [categories, setCategories] = useState([
-        { id: 1, title: 'Default', description: 'General tasks' },
-        { id: 2, title: 'Work', description: 'Work-related tasks' },
-        { id: 3, title: 'Personal', description: 'Personal tasks and goals' },
-    ]);
+    const [categories, setCategories] = useState([]);
 
     // Function to fetch tasks from the API
     const fetchTasks = async (page = 0, size = 6, sort = 'id,desc') => {
@@ -73,17 +68,40 @@ const Dashboard = () => {
                     'Authorization': `Bearer ${sessionToken}`
                 }
             });
-            const data = await response.json();
-            console.log('Tasks:', data.content);
-            setTasks(data.content || []);
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Tasks:', data.content);
+                setTasks(data.content || []);
+            }
         } catch (error) {
             console.error('Error fetching tasks:', error);
             throw error;
         }
     };
 
+    // Function to fetch categories from the API
+    const fetchCategories = async () => {
+        const sessionToken = sessionStorage.getItem('sessionToken');
+        try {
+            const response = await fetch(`${API_URL}/categories?sort=id,desc`, {
+                headers: {
+                    'Authorization': `Bearer ${sessionToken}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Categories:', data.content);
+                setCategories(data.content || []);
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            throw error;
+        }
+    };
+
     // Fetch all tasks from the API on component mount
     useEffect(() => {
+        fetchCategories();
         fetchTasks();
     }, []);
 
@@ -200,21 +218,21 @@ const Dashboard = () => {
                                     {tasks.map(task => (
                                         <Task
                                             key={task.id}
-                                            category={task.category}
+                                            category={task.category?.title}
                                             id={task.id}
                                             title={task.title}
                                             status={task.completionStatus}
                                             priority={task.priority}
                                             deadline={task.deadline}
                                             description={task.description}
-                                            categories={categories}  // Pass the categories prop
+                                            categories={categories}
                                             onEdit={handleEditTask}
                                             onDelete={handleDeleteTask}
                                         />
                                     ))}
                                     {/* Center the Load More button */}
                                     <div className="d-flex justify-content-center mt-2">
-                                        <button className="btn btn-outline-tt-color" onClick={() => fetchTasks(0, tasks.length + 6)} style={{height: '35px'}}>
+                                        <button className="btn btn-outline-tt-color" onClick={() => fetchTasks(0, tasks.length + 12)} style={{height: '35px'}}>
                                             <span className="me-2">&#x25BC;</span>Load More
                                         </button>
                                     </div>

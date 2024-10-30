@@ -49,17 +49,18 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
         <div className="task-item border rounded p-3 mb-3 d-flex justify-content-between align-items-center shadow-sm" style={{ backgroundColor: '#f8f9fa', height: '55px' }}>
             {/* Left Section - Task Info (Horizontally Stacked) */}
             <div className="task-info d-flex align-items-center">
-                {/* Associated Category */}
-                <span className="badge bg-primary me-3" style={{ padding: '0.6em 1em', width: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{category}</span>
-
                 {/* Priority Indicator */}
-                <div className={`${getPriorityClass(priority)}`} style={{ display: 'inline-block', width: '10px', height: '60px', borderRadius: '0', marginRight: '15px' }}></div>
+                <div className={`${getPriorityClass(priority)}`} style={{ display: 'inline-block', width: '10px', height: '55px', borderRadius: '0', marginRight: '15px' }}></div>
 
-                {/* Task Title */}
-                <h5 className="fw-bold text-dark mb-0" style={{ maxWidth: '350px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {title}
-                </h5>
+                {/* Task Title and Category */}
+                <div className="d-flex flex-column">
+                    <h5 className="fw-bold text-dark mb-0" style={{ maxWidth: '350px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {title}
+                    </h5>
+                    <span className="text-muted" style={{ padding: '0.4em 0.8em', fontSize: '12px', fontStyle: 'italic', paddingTop: '2px', paddingBottom: '0px' }}>{category}</span>
+                </div>
             </div>
+
 
             {/* Right Section - Task Meta Information */}
             <div className="task-meta d-flex align-items-center">
@@ -91,7 +92,7 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
                     style={{ borderRadius: '20px' }}
                     onClick={() => setShowDeleteModal(true)}
                 >
-                    Remove
+                    Delete
                 </button>
             </div>
 
