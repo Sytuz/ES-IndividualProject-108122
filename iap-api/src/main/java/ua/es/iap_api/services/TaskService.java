@@ -59,5 +59,12 @@ public class TaskService {
     public Task findById(Long id) {
         return taskRepository.findById(id).orElse(null);
     }
+
+    public void updateCategoryToNullByCategoryId(Long categoryId) {
+        taskRepository.findAllByCategoryId(categoryId, Pageable.unpaged()).forEach(task -> {
+            task.setCategory(null);
+            taskRepository.save(task);
+        });
+    }
 }
 

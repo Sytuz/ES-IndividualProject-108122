@@ -15,7 +15,7 @@ const Category = ({ id, title, description, onEdit, onDelete }) => {
     };
 
     const handleDelete = () => {
-        onDelete(id, deleteTasks); // Pass deleteTasks option to parent
+        onDelete({id, deleteTasks}); 
         setShowDeleteModal(false); // Close modal after confirming deletion
     };
 

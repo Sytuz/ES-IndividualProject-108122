@@ -94,7 +94,7 @@ public class TaskController {
             @ApiResponse(responseCode = "400", description = "Invalid task data"),
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
-    @DeleteMapping()
+    @DeleteMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteTask(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -129,7 +129,7 @@ public class TaskController {
         if (task.getId() == null) {
             return ResponseEntity.badRequest().build();
         }
-        
+
         Task oldTask = taskService.findById(task.getId());
         if (oldTask == null || !oldTask.getUserEmail().equals(userEmail)) {
             return ResponseEntity.badRequest().build();
