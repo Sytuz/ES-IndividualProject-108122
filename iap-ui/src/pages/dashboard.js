@@ -11,9 +11,31 @@ import CategoryModal from '@/components/CategoryModal';
 const Dashboard = () => {
     const router = useRouter();
     const [username, setUsername] = useState('');
-
     const [showTaskCreateModal, setShowTaskCreateModal] = useState(false);
     const [showCategoryCreateModal, setShowCategoryCreateModal] = useState(false);
+
+    const [sortOption, setSortOption] = useState('id,desc');
+    const [filterStatus, setFilterStatus] = useState('');
+    const [filterCategory, setFilterCategory] = useState('');
+    const [filterCategoryTitle, setFilterCategoryTitle] = useState('All');
+
+    const [tasks, setTasks] = useState([]);
+    const [categories, setCategories] = useState([]);
+
+    const sortOptionToText = {
+        'id,desc': 'None',
+        'priority,desc': 'Priority',
+        'deadline,desc': 'Deadline',
+        'creationDate,desc': 'Creation Date',
+        'completionStatus,desc': 'Completion Status',
+    };
+
+    const filterStatusToText = {
+        '': 'None',
+        'IDLE': 'Idle',
+        'ONGOING': 'Ongoing',
+        'COMPLETED': 'Completed',
+    };
 
     // Get the username from the session token, to put on navbar
     useEffect(() => {
@@ -55,17 +77,13 @@ const Dashboard = () => {
         };
     }, []);
 
-    const emptyTask = { id: 0, category: '', title: '', status: '', priority: '', deadline: '' };
-    const [taskToEdit, setTaskToEdit] = useState(emptyTask);
-
-    const [tasks, setTasks] = useState([]);
-    const [categories, setCategories] = useState([]);
 
     // Function to fetch tasks from the API
     const fetchTasks = async (page = 0, size = 6, sort = 'id,desc') => {
         const sessionToken = sessionStorage.getItem('sessionToken');
         try {
-            const response = await fetch(`${API_URL}/tasks?page=${page}&size=${size}&sort=${sort}`, {
+            const queryParams = `page=${page}&size=${size}&sort=${sortOption}${filterStatus ? `&status=${filterStatus}` : ''}${filterCategory ? `&categoryId=${filterCategory}` : ''}`;
+            const response = await fetch(`${API_URL}/tasks?${queryParams}`, {
                 headers: {
                     'Authorization': `Bearer ${sessionToken}`
                 }
@@ -101,11 +119,24 @@ const Dashboard = () => {
         }
     };
 
-    {/* Fetch all tasks from the API on component mount */}
+    {/* Fetch all tasks from the API on component mount */ }
     useEffect(() => {
         fetchCategories();
         fetchTasks();
-    }, []);
+    }, [sortOption, filterStatus, filterCategory]);
+
+    const handleSortChange = (newSortOption) => {
+        setSortOption(newSortOption);
+    };
+
+    const handleFilterChange = (newFilterStatus) => {
+        setFilterStatus(newFilterStatus);
+    };
+
+    const handleCategoryChange = (newCategoryId, newCategoryTitle) => {
+        setFilterCategory(newCategoryId);
+        setFilterCategoryTitle(newCategoryTitle);
+    };
 
     {/* Function to edit a category */ }
     const onEditCategory = async (editedCategoryData) => {
@@ -348,8 +379,61 @@ const Dashboard = () => {
                         {/* Tasks Section */}
                         <div className="col-md-9 h-100 d-flex flex-column">
                             <div className="card flex-grow-1">
-                                <div className="card-header text-center">
-                                    <h4>Tasks</h4>
+                                <div className="card-header d-flex justify-content-between align-items-center">
+                                    {/* Centered Header */}
+                                    <h4 className="text-start flex-grow-1 mb-0">Tasks</h4>
+
+                                    {/* Sort and Filter Buttons */}
+                                    <div className="d-flex align-items-center">
+                                        {/* Sort Dropdown */}
+                                        <div className="dropdown me-2">
+                                            <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Sort: {sortOptionToText[sortOption] || 'None'}
+                                            </button>
+                                            <ul className="dropdown-menu dropdown-menu-end text-end" aria-labelledby="sortDropdown">
+                                                <li><a className="dropdown-item" onClick={() => handleSortChange('id,desc')}>None</a></li>
+                                                <li><a className="dropdown-item" onClick={() => handleSortChange('priority,asc')}>Priority</a></li>
+                                                <li><a className="dropdown-item" onClick={() => handleSortChange('deadline,asc')}>Deadline</a></li>
+                                                <li><a className="dropdown-item" onClick={() => handleSortChange('createdAt,desc')}>Creation Date</a></li>
+                                                <li><a className="dropdown-item" onClick={() => handleSortChange('completionStatus,asc')}>Completion Status</a></li>
+                                            </ul>
+                                        </div>
+
+                                        {/* Filter Dropdown */}
+                                        <div className="dropdown me-2">
+                                            <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Filter: {filterStatusToText[filterStatus] || 'None'}
+                                            </button>
+                                            <ul className="dropdown-menu dropdown-menu-end text-end" aria-labelledby="filterDropdown">
+                                                <li><a className="dropdown-item" onClick={() => handleFilterChange('')}>None</a></li>
+                                                <li><a className="dropdown-item" onClick={() => handleFilterChange('IDLE')}>Idle</a></li>
+                                                <li><a className="dropdown-item" onClick={() => handleFilterChange('ONGOING')}>Ongoing</a></li>
+                                                <li><a className="dropdown-item" onClick={() => handleFilterChange('COMPLETED')}>Completed</a></li>
+                                            </ul>
+                                        </div>
+
+                                        {/* Category Dropdown */}
+                                        <div className="dropdown">
+                                            <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Category: {filterCategoryTitle}
+                                            </button>
+                                            <ul className="dropdown-menu dropdown-menu-end text-end" aria-labelledby="categoryDropdown">
+                                                <li>
+                                                    <a className="dropdown-item" onClick={() => handleCategoryChange('', 'All')}>All</a>
+                                                </li>
+                                                <li>
+                                                    <a className="dropdown-item" onClick={() => handleCategoryChange(-1, 'None')}>None</a>
+                                                </li>
+                                                {categories.map(category => (
+                                                    <li key={category.id}>
+                                                        <a className="dropdown-item" onClick={() => handleCategoryChange(category.id, category.title)}>
+                                                            {category.title > 15 ? category.title.substring(0, 11) + '...' : category.title}
+                                                        </a>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="card-body overflow-auto" style={{ maxHeight: '70vh' }}>
                                     {tasks.map(task => (
@@ -358,7 +442,7 @@ const Dashboard = () => {
                                             category={task.category}
                                             id={task.id}
                                             title={task.title}
-                                            status={task.completionStatus}
+                                            completionStatus={task.completionStatus}
                                             priority={task.priority}
                                             deadline={task.deadline}
                                             description={task.description}

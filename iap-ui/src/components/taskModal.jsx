@@ -7,13 +7,13 @@ const TaskModal = ({ show, onClose, onSave, initialData = {}, categories, isEdit
     const [id, setId] = useState(initialData.id || null);
     const [title, setTitle] = useState(initialData.title || '');
     const [description, setDescription] = useState(initialData.description || '');
-    const [status, setStatus] = useState(initialData.status || 'IDLE');
+    const [completionStatus, setCompletionStatus] = useState(initialData.completionStatus || 'IDLE');
     const [priority, setPriority] = useState(initialData.priority || 'UNDEFINED');
     const [deadline, setDeadline] = useState(initialData.deadline || '');
-    const [category, setCategory] = useState(initialData.category || '');
+    const [category, setCategory] = useState(initialData.category || null);
 
     const handleSave = () => {
-        onSave({ id, title, description, status, priority, deadline, category });
+        onSave({ id, title, description, completionStatus, priority, deadline, category });
         onClose();
     };
 
@@ -40,9 +40,9 @@ const TaskModal = ({ show, onClose, onSave, initialData = {}, categories, isEdit
                         <Form.Label>Description</Form.Label>
                         <Form.Control as="textarea" rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />
                     </Form.Group>
-                    <Form.Group controlId="formTaskStatus" className="mt-3">
-                        <Form.Label>Status</Form.Label>
-                        <Form.Select value={status} onChange={(e) => setStatus(e.target.value)}>
+                    <Form.Group controlId="formTaskCompletionStatus" className="mt-3">
+                        <Form.Label>Completion Status</Form.Label>
+                        <Form.Select value={completionStatus} onChange={(e) => setCompletionStatus(e.target.value)}>
                             <option value="IDLE">Idle</option>
                             <option value="ONGOING">Ongoing</option>
                             <option value="COMPLETED">Completed</option>
@@ -64,7 +64,7 @@ const TaskModal = ({ show, onClose, onSave, initialData = {}, categories, isEdit
                     <Form.Group controlId="formTaskCategory" className="mt-3">
                         <Form.Label>Category</Form.Label>
                         <Form.Select
-                            value={category.id || ''}
+                            value={category?.id || ''}
                             onChange={(e) => {
                                 const selectedCategory = categories.find(cat => cat.id === Number(e.target.value));
                                 setCategory(selectedCategory || {});

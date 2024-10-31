@@ -24,7 +24,7 @@ const Category = ({ id, title, description, onEdit, onDelete }) => {
             {/* Category Info */}
             <div className="category-info d-flex align-items-center">
                 <h5 className="mb-0 fw-bold text-dark" style={{ maxWidth: '350px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '1.3rem' }}>
-                    {title}
+                    {title.length > 15 ? title.substring(0, 11) + '...' : title}
                 </h5>
             </div>
 

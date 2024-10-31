@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.es.iap_api.repositories.TaskRepository;
+import ua.es.iap_api.entities.CompletionStatus;
 import ua.es.iap_api.entities.Task;
 
 @Service
@@ -45,8 +46,8 @@ public class TaskService {
 
     public boolean isTaskValid(Task task) {
         return (task.getTitle() == null || (task.getTitle().length() >= minTitleLength &&
-            task.getTitle().length() <= maxTitleLength)) &&
-            (task.getDescription() == null || task.getDescription().length() <= maxDescriptionLength);
+                task.getTitle().length() <= maxTitleLength)) &&
+                (task.getDescription() == null || task.getDescription().length() <= maxDescriptionLength);
     }
 
     public Task save(Task task) {
@@ -60,6 +61,26 @@ public class TaskService {
         return taskRepository.findById(id).orElse(null);
     }
 
+    // Existing imports...
+
+    public Page<Task> findTasksByUserEmailAndFilters(String email, String status, Long categoryId, Pageable pageable) {
+        if (status != null && categoryId != null) {
+            if (categoryId == -1) {
+                return taskRepository.findAllByUserEmailAndCompletionStatusAndCategoryIdIsNull(email, CompletionStatus.valueOf(status), pageable);
+            }
+            return taskRepository.findAllByUserEmailAndCompletionStatusAndCategoryId(email, CompletionStatus.valueOf(status), categoryId, pageable);
+        } else if (status != null) {
+            return taskRepository.findAllByUserEmailAndCompletionStatus(email, CompletionStatus.valueOf(status), pageable);
+        } else if (categoryId != null) {
+            if (categoryId == -1) {
+                return taskRepository.findAllByUserEmailAndCategoryIdIsNull(email, pageable);
+            }
+            return taskRepository.findAllByUserEmailAndCategoryId(email, categoryId, pageable);
+        } else {
+            return taskRepository.findAllByUserEmail(email, pageable);
+        }
+    }
+
     public void updateCategoryToNullByCategoryId(Long categoryId) {
         taskRepository.findAllByCategoryId(categoryId, Pageable.unpaged()).forEach(task -> {
             task.setCategory(null);
@@ -67,4 +88,3 @@ public class TaskService {
         });
     }
 }
-
