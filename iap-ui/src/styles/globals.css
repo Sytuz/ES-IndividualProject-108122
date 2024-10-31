@@ -86,3 +86,14 @@
   background-color: #dc3545;
   color: white;
 }
+
+.dropdown-item {
+  transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+  color: #333;
+  transform: scale(1.05); /* Slightly scale up the item */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow */
+}

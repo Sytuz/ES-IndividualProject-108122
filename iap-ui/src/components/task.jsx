@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import TaskModal from './TaskModal';
 
-const Task = ({ id, title, description, status, priority, deadline, category, categories, onEdit, onDelete }) => {
+const Task = ({ id, title, description, completionStatus, priority, deadline, category, categories, onEdit, onDelete }) => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -32,8 +32,8 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
         }
     };
 
-    const getStatusClass = (status) => {
-        switch (status.toLowerCase()) {
+    const getStatusClass = (completionStatus) => {
+        switch (completionStatus.toLowerCase()) {
             case 'completed':
                 return 'bg-success';
             case 'ongoing':
@@ -75,7 +75,7 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
                 )}
 
                 {/* Task Status */}
-                <span className={`badge ${getStatusClass(status)} me-3`} style={{ fontWeight: '500', padding: '0.6em 1em', width: '112px', textAlign: 'center' }}>{status}</span>
+                <span className={`badge ${getStatusClass(completionStatus)} me-3`} style={{ fontWeight: '500', padding: '0.6em 1em', width: '112px', textAlign: 'center' }}>{completionStatus}</span>
 
                 {/* Trigger Edit Modal */}
                 <button
@@ -101,7 +101,7 @@ const Task = ({ id, title, description, status, priority, deadline, category, ca
                 show={showEditModal}
                 onClose={() => setShowEditModal(false)}
                 onSave={handleEdit}
-                initialData={{ id, title, description, status, priority, deadline, category }}
+                initialData={{ id, title, description, completionStatus, priority, deadline, category }}
                 categories={categories}
                 isEditMode={true}
             />

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -55,12 +56,15 @@ public class TaskController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<Task>> getTasks(
             @AuthenticationPrincipal UserDetails userDetails,
-            Pageable pageable) {
-        
+            Pageable pageable,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Long categoryId) {
+
         logger.info("Attempting to retrieve tasks for user: {}", userDetails.getUsername());
+        logger.info("Status: {}, Category ID: {}", status, categoryId);
 
         String userEmail = userDetails.getUsername(); // Extract email from token subject
-        Page<Task> tasks = taskService.findAllByUserEmail(userEmail, pageable);
+        Page<Task> tasks = taskService.findTasksByUserEmailAndFilters(userEmail, status, categoryId, pageable);
         return ResponseEntity.ok(tasks);
     }
 
@@ -75,13 +79,13 @@ public class TaskController {
     public ResponseEntity<Task> createTask(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody Task task) {
-        
+
         logger.info("Attempting to create a new task for user: {}", userDetails.getUsername());
 
         String userEmail = userDetails.getUsername(); // Extract email from token subject
         task.setUserEmail(userEmail);
         Task newTask = taskService.save(task);
-        
+
         if (newTask == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -99,7 +103,7 @@ public class TaskController {
     public ResponseEntity<Void> deleteTask(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody Long taskId) {
-        
+
         logger.info("Attempting to delete task for user: {}", userDetails.getUsername());
 
         String userEmail = userDetails.getUsername(); // Extract email from token subject
@@ -122,7 +126,7 @@ public class TaskController {
     public ResponseEntity<Task> editTask(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody Task task) {
-        
+
         logger.info("Attempting to edit task for user: {}", userDetails.getUsername());
 
         String userEmail = userDetails.getUsername(); // Extract email from token subject
