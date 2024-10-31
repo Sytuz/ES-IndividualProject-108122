@@ -47,5 +47,8 @@ public class DataInitializer implements CommandLineRunner {
         for (int i = 21; i <= 25; i++) {
             taskService.save(new Task("Test" + i, "Test" + i + "Description", user.getEmail(), category));
         }
+
+        Category category2 = new Category("Test Category 2", user.getEmail());
+        categoryService.save(category2);
     }
 }

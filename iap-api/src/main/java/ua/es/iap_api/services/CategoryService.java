@@ -8,6 +8,7 @@ import ua.es.iap_api.entities.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CategoryService {
@@ -20,17 +21,22 @@ public class CategoryService {
 
     private TaskService taskService;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, TaskService taskService) {
         this.categoryRepository = categoryRepository;
+        this.taskService = taskService;
     }
 
     public void deleteById(Long id) {
         categoryRepository.deleteById(id);
     }
 
+    @Transactional
     public void delete(Long id, boolean deleteTasks) {
         if (deleteTasks) {
             taskService.deleteByCategoryId(id);
+        }
+        else {
+            taskService.updateCategoryToNullByCategoryId(id);
         }
         categoryRepository.deleteById(id);
     }

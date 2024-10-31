@@ -101,37 +101,11 @@ const Dashboard = () => {
         }
     };
 
-    // Fetch all tasks from the API on component mount
+    {/* Fetch all tasks from the API on component mount */}
     useEffect(() => {
         fetchCategories();
         fetchTasks();
     }, []);
-
-    const handleEditCategory = (id, newTitle, newDescription) => {
-        // Find the old title of the category being edited
-        const oldCategory = categories.find(category => category.id === id).title;
-
-        // Update categories
-        setCategories(categories.map(category =>
-            category.id === id
-                ? { ...category, title: newTitle, description: newDescription }
-                : category
-        ));
-
-        // Update tasks that are associated with the old category title
-        setTasks(tasks.map(task =>
-            task.category === oldCategory
-                ? { ...task, category: newTitle } // Change to new title
-                : task
-        ));
-    };
-
-    const handleDeleteCategory = (id, deleteTasks) => {
-        setCategories(categories.filter(category => category.id !== id));
-        if (deleteTasks) {
-            setTasks(tasks.filter(task => task.category !== categories.find(category => category.id === id).title));
-        }
-    };
 
     {/* Function to edit a category */ }
     const onEditCategory = async (editedCategoryData) => {
@@ -165,6 +139,41 @@ const Dashboard = () => {
             }
         } catch (error) {
             console.error('Error editing category:', error);
+        }
+
+    };
+
+    {/* Function to delete a category */ }
+    const onDeleteCategory = async (deleteDTO) => {
+        const sessionToken = sessionStorage.getItem('sessionToken');
+        try {
+            const response = await fetch(`${API_URL}/categories`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionToken}`
+                },
+                body: JSON.stringify(deleteDTO)
+            });
+            if (response.ok) {
+                console.log('Category deleted: ', deleteDTO.id);
+                alert('Category deleted successfully!');
+                fetchCategories(); // Fetch categories again to update the list
+                fetchTasks(); // Fetch tasks again to update the list
+            } else {
+                // If the response code is 400, warn the user about invalid input
+                if (response.status === 400) {
+                    console.error('Invalid input for category deletion');
+                    alert('Invalid input for category deletion');
+                }
+                else if (response.status === 403) {
+                    console.error('Unauthorized to delete category');
+                    router.push('/login'); // Redirect to login if not authorized
+                }
+                console.error('Failed to delete category');
+            }
+        } catch (error) {
+            console.error('Error delete category:', error);
         }
 
     };
@@ -243,6 +252,7 @@ const Dashboard = () => {
         }
 
     };
+
 
     {/* Function to delete a task */ }
     const onDeleteTask = async (id) => {
@@ -389,7 +399,7 @@ const Dashboard = () => {
                                             title={category.title}
                                             description={category.description}
                                             onEdit={onEditCategory}
-                                            onDelete={(deleteTasks) => handleDeleteCategory(category.id, deleteTasks)}
+                                            onDelete={onDeleteCategory}
                                         />
                                     ))}
                                 </div>

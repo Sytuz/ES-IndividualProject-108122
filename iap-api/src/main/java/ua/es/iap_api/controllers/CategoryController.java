@@ -1,6 +1,7 @@
 package ua.es.iap_api.controllers;
 
 import ua.es.iap_api.services.CategoryService;
+import ua.es.iap_api.dtos.CategoryDelDTO;
 import ua.es.iap_api.entities.Category;
 import ua.es.iap_api.entities.Task;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +21,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -85,6 +86,31 @@ public class CategoryController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(newCategory);
+    }
+
+    
+    @Operation(summary = "Delete a user category", description = "Deletes a category for the authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successful deletion"),
+            @ApiResponse(responseCode = "400", description = "Invalid category data"),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+    })
+    @DeleteMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> deleteCategory(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody CategoryDelDTO categoryDelDTO) {
+        
+        logger.info("Attempting to delete category for user: {}", userDetails.getUsername());
+
+        String userEmail = userDetails.getUsername(); // Extract email from token subject
+        Category category = categoryService.findById(categoryDelDTO.getId());
+        if (category == null || !category.getUserEmail().equals(userEmail)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        categoryService.delete(categoryDelDTO.getId(), categoryDelDTO.isDeleteTasks());
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Edit a user category", description = "Edits a category for the authenticated user")
