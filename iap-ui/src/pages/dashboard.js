@@ -381,7 +381,7 @@ const Dashboard = () => {
                             <div className="card flex-grow-1">
                                 <div className="card-header d-flex justify-content-between align-items-center">
                                     {/* Centered Header */}
-                                    <h4 className="text-center flex-grow-1 mb-0">Tasks</h4>
+                                    <h4 className="text-start flex-grow-1 mb-0">Tasks</h4>
 
                                     {/* Sort and Filter Buttons */}
                                     <div className="d-flex align-items-center">
@@ -404,7 +404,7 @@ const Dashboard = () => {
                                             <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                                 Filter: {filterStatusToText[filterStatus] || 'None'}
                                             </button>
-                                            <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="filterDropdown">
+                                            <ul className="dropdown-menu dropdown-menu-end text-end" aria-labelledby="filterDropdown">
                                                 <li><a className="dropdown-item" onClick={() => handleFilterChange('')}>None</a></li>
                                                 <li><a className="dropdown-item" onClick={() => handleFilterChange('IDLE')}>Idle</a></li>
                                                 <li><a className="dropdown-item" onClick={() => handleFilterChange('ONGOING')}>Ongoing</a></li>
@@ -417,7 +417,7 @@ const Dashboard = () => {
                                             <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                                 Category: {filterCategoryTitle}
                                             </button>
-                                            <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="categoryDropdown">
+                                            <ul className="dropdown-menu dropdown-menu-end text-end" aria-labelledby="categoryDropdown">
                                                 <li>
                                                     <a className="dropdown-item" onClick={() => handleCategoryChange('', 'All')}>All</a>
                                                 </li>
@@ -427,7 +427,7 @@ const Dashboard = () => {
                                                 {categories.map(category => (
                                                     <li key={category.id}>
                                                         <a className="dropdown-item" onClick={() => handleCategoryChange(category.id, category.title)}>
-                                                            {category.title}
+                                                            {category.title > 15 ? category.title.substring(0, 11) + '...' : category.title}
                                                         </a>
                                                     </li>
                                                 ))}
