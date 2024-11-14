@@ -29,7 +29,7 @@ public class TaskService {
     }
 
     public Page<Task> findAllByUserEmail(String email, Pageable pageable) {
-        return taskRepository.findAllByUserEmail(email, pageable);
+        return taskRepository.findAllByUserSub(email, pageable);
     }
 
     public void deleteById(Long id) {
@@ -63,21 +63,21 @@ public class TaskService {
 
     // Existing imports...
 
-    public Page<Task> findTasksByUserEmailAndFilters(String email, String status, Long categoryId, Pageable pageable) {
+    public Page<Task> findTasksByUserSubAndFilters(String sub, String status, Long categoryId, Pageable pageable) {
         if (status != null && categoryId != null) {
             if (categoryId == -1) {
-                return taskRepository.findAllByUserEmailAndCompletionStatusAndCategoryIdIsNull(email, CompletionStatus.valueOf(status), pageable);
+                return taskRepository.findAllByUserSubAndCompletionStatusAndCategoryIdIsNull(sub, CompletionStatus.valueOf(status), pageable);
             }
-            return taskRepository.findAllByUserEmailAndCompletionStatusAndCategoryId(email, CompletionStatus.valueOf(status), categoryId, pageable);
+            return taskRepository.findAllByUserSubAndCompletionStatusAndCategoryId(sub, CompletionStatus.valueOf(status), categoryId, pageable);
         } else if (status != null) {
-            return taskRepository.findAllByUserEmailAndCompletionStatus(email, CompletionStatus.valueOf(status), pageable);
+            return taskRepository.findAllByUserSubAndCompletionStatus(sub, CompletionStatus.valueOf(status), pageable);
         } else if (categoryId != null) {
             if (categoryId == -1) {
-                return taskRepository.findAllByUserEmailAndCategoryIdIsNull(email, pageable);
+                return taskRepository.findAllByUserSubAndCategoryIdIsNull(sub, pageable);
             }
-            return taskRepository.findAllByUserEmailAndCategoryId(email, categoryId, pageable);
+            return taskRepository.findAllByUserSubAndCategoryId(sub, categoryId, pageable);
         } else {
-            return taskRepository.findAllByUserEmail(email, pageable);
+            return taskRepository.findAllByUserSub(sub, pageable);
         }
     }
 
