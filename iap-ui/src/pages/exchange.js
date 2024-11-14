@@ -8,9 +8,9 @@ const Exchange = () => {
     const router = useRouter();
 
     useEffect(() => {
-        const { code, state } = router.query;
+        const { code } = router.query;
 
-        if (code && state) {
+        if (code) {
             // Optionally verify state matches a value in localStorage/sessionStorage
             // const storedState = sessionStorage.getItem('oauthState');
             // if (storedState !== state) {
