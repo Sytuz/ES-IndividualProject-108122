@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,12 +51,10 @@ public class CategoryController {
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<Category>> getCategories(
-            @AuthenticationPrincipal JwtAuthenticationToken jwtAuthToken,
+            @AuthenticationPrincipal Jwt jwt,
             Pageable pageable) {
 
-        Jwt jwt = jwtAuthToken.getToken();
         String userSub = jwt.getClaim("sub");
         String userName = jwt.getClaim("username");
 
@@ -76,10 +73,9 @@ public class CategoryController {
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Category> createCategory(
-            @AuthenticationPrincipal JwtAuthenticationToken jwtAuthToken,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody Category category) {
         
-        Jwt jwt = jwtAuthToken.getToken();
         String userSub = jwt.getClaim("sub");
         String userName = jwt.getClaim("username");
 
@@ -104,10 +100,9 @@ public class CategoryController {
     @DeleteMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteCategory(
-            @AuthenticationPrincipal JwtAuthenticationToken jwtAuthToken,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody CategoryDelDTO categoryDelDTO) {
         
-        Jwt jwt = jwtAuthToken.getToken();
         String userSub = jwt.getClaim("sub");
         String userName = jwt.getClaim("username");
         
@@ -131,10 +126,9 @@ public class CategoryController {
     @PutMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Category> editCategory(
-            @AuthenticationPrincipal JwtAuthenticationToken jwtAuthToken,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody Category category) {
 
-        Jwt jwt = jwtAuthToken.getToken();
         String userSub = jwt.getClaim("sub");
         String userName = jwt.getClaim("username");        
         

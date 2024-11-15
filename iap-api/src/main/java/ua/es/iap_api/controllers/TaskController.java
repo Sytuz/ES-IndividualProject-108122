@@ -19,7 +19,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -55,14 +54,12 @@ public class TaskController {
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<Task>> getTasks(
-            @AuthenticationPrincipal JwtAuthenticationToken jwtAuthToken,
+            @AuthenticationPrincipal Jwt jwt,
             Pageable pageable,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Long categoryId) {
 
-        Jwt jwt = jwtAuthToken.getToken();
         String userSub = jwt.getClaim("sub");
         String userName = jwt.getClaim("username");
 
@@ -83,10 +80,9 @@ public class TaskController {
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Task> createTask(
-            @AuthenticationPrincipal JwtAuthenticationToken jwtAuthToken,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody Task task) {
 
-        Jwt jwt = jwtAuthToken.getToken();
         String userSub = jwt.getClaim("sub");
         String userName = jwt.getClaim("username");
 
@@ -110,10 +106,9 @@ public class TaskController {
     @DeleteMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteTask(
-            @AuthenticationPrincipal JwtAuthenticationToken jwtAuthToken,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody Long taskId) {
 
-        Jwt jwt = jwtAuthToken.getToken();
         String userSub = jwt.getClaim("sub");
         String userName = jwt.getClaim("username");
 
@@ -139,10 +134,9 @@ public class TaskController {
     @PutMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Task> editTask(
-            @AuthenticationPrincipal JwtAuthenticationToken jwtAuthToken,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody Task task) {
         
-        Jwt jwt = jwtAuthToken.getToken();
         String userSub = jwt.getClaim("sub");
         String userName = jwt.getClaim("username");
 

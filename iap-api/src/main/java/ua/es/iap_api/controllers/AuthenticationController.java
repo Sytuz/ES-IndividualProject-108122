@@ -17,8 +17,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.slf4j.Logger;
@@ -176,11 +174,18 @@ public class AuthenticationController {
             if (responseBody != null) {
                 String accessToken = responseBody.get("access_token");
                 String refreshToken = responseBody.get("refresh_token");
+                String idToken = responseBody.get("id_token");
     
                 // Return the tokens in the response
                 Map<String, String> tokens = new HashMap<>();
                 tokens.put("accessToken", accessToken);
                 tokens.put("refreshToken", refreshToken);
+                tokens.put("idToken", idToken);
+
+                // Add CORS headers to the response
+                HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.add("Access-Control-Allow-Origin", "*"); // Allow the frontend to access the response
+                responseHeaders.add("Access-Control-Allow-Credentials", "true"); // Allow cookies and credentials in cross-origin requests
     
                 return ResponseEntity.ok(tokens);
             } else {

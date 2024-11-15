@@ -29,14 +29,16 @@ const Exchange = () => {
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    const { accessToken, refreshToken } = data;
+                    const { accessToken, refreshToken, idToken } = data;
 
                     // Store tokens in cookies
                     Cookies.set('accessToken', accessToken, { expires: 7, secure: true, sameSite: 'Strict' });
                     Cookies.set('refreshToken', refreshToken, { expires: 7, secure: true, sameSite: 'Strict' });
+                    Cookies.set('idToken', idToken, { expires: 7, secure: true, sameSite: 'Strict' });
+
 
                     // Decode the access token to get the username (or other claims)
-                    const decodedToken = jwtDecode(accessToken);
+                    const decodedToken = jwtDecode(idToken);
                     console.log('Decoded token:', decodedToken);
                     const username = decodedToken['cognito:username']; // This is usually the claim for the username in Cognito
 
