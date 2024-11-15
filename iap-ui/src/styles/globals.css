@@ -97,3 +97,16 @@
   transform: scale(1.05); /* Slightly scale up the item */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow */
 }
+
+.navbar-nav {
+  display: flex; /* Ensure children stay in a row */
+  flex-direction: row; /* Explicitly set the direction to row */
+  align-items: center; /* Align items vertically */
+  justify-content: flex-end; /* Push items to the right */
+  gap: 1rem; /* Add space between items */
+}
+
+.card-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}

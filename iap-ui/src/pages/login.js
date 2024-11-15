@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { jwtDecode } from "jwt-decode";    
 import Cookies from 'js-cookie'; // Import js-cookie
 import { API_URL } from '../../api_url';
 
@@ -22,17 +21,10 @@ const Login = () => {
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    const { accessToken, refreshToken, idToken } = data;
+                    const { idToken } = data;
 
                     // Store tokens in cookies
                     Cookies.set('idToken', idToken, { expires: 7, secure: true, sameSite: 'Strict' });
-
-                    // Decode the access token to get the username (or other claims)
-                    const decodedToken = jwtDecode(idToken);
-                    console.log('Decoded token:', decodedToken);
-                    const username = decodedToken['cognito:username']; // This is usually the claim for the username in Cognito
-
-                    console.log('Username:', username);
 
                     // Redirect to authenticated dashboard
                     router.push('/dashboard');

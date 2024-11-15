@@ -8,7 +8,7 @@ import { API_URL } from '../../api_url';
 import TaskModal from '@/components/TaskModal';
 import CategoryModal from '@/components/CategoryModal';
 import Cookies from 'js-cookie';  // Import js-cookie
-import { jwtDecode } from "jwt-decode";    
+import { jwtDecode } from "jwt-decode";
 
 const Dashboard = () => {
     const router = useRouter();
@@ -70,10 +70,11 @@ const Dashboard = () => {
     };
 
     // Function to fetch categories from the API
-    const fetchCategories = async () => {
+    const fetchCategories = async (page = 0, size = 6) => {
         const token = Cookies.get('idToken');
         try {
-            const response = await fetch(`${API_URL}/categories?sort=id,desc`, {
+            const queryParams = `page=${page}&size=${size}&sort=id,desc`;
+            const response = await fetch(`${API_URL}/categories?${queryParams}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -412,7 +413,15 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                                 <div className="card-body overflow-auto" style={{ maxHeight: '70vh' }}>
-                                    {tasks.map(task => (
+                                    {/* Display a message if there are no tasks */}
+                                    {tasks && tasks.length === 0 && (
+                                        <div className="text-center text-muted fst-italic">
+                                            Create new tasks by clicking the 'New Task' button below
+                                        </div>
+                                    )}
+
+                                    {/* Map over tasks and render the Task components */}
+                                    {tasks && tasks.map(task => (
                                         <Task
                                             key={task.id}
                                             category={task.category}
@@ -427,12 +436,19 @@ const Dashboard = () => {
                                             onDelete={onDeleteTask}
                                         />
                                     ))}
+
                                     {/* Center the Load More button */}
-                                    <div className="d-flex justify-content-center mt-2">
-                                        <button className="btn btn-outline-tt-color" onClick={() => fetchTasks(0, tasks.length + 12)} style={{ height: '35px' }}>
-                                            <span className="me-2">&#x25BC;</span>Load More
-                                        </button>
-                                    </div>
+                                    {tasks && tasks.length >= 6 && (
+                                        <div className="d-flex justify-content-center mt-2">
+                                            <button
+                                                className="btn btn-outline-tt-color"
+                                                onClick={() => fetchTasks(0, tasks.length + 12)}
+                                                style={{ height: '35px' }}
+                                            >
+                                                <span className="me-2">&#x25BC;</span>Load More
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => setShowTaskCreateModal(true)}>
@@ -453,7 +469,13 @@ const Dashboard = () => {
                                     <h4>Categories</h4>
                                 </div>
                                 <div className="card-body overflow-auto" style={{ maxHeight: '70vh' }}>
-                                    {categories.map(category => (
+                                    {/* Display a message if there are no categories */}
+                                    {categories && categories.length === 0 && (
+                                        <div className="text-center text-muted fst-italic">
+                                            Create new categories by clicking the 'New Category' button below
+                                        </div>
+                                    )}
+                                    {categories && categories.map(category => (
                                         <Category
                                             id={category.id}
                                             title={category.title}
@@ -462,6 +484,18 @@ const Dashboard = () => {
                                             onDelete={onDeleteCategory}
                                         />
                                     ))}
+                                    {/* Center the Load More button */}
+                                    {categories && categories.length >= 6 && (
+                                        <div className="d-flex justify-content-center mt-2">
+                                            <button
+                                                className="btn btn-outline-tt-color"
+                                                onClick={() => fetchCategories(0, categories.length + 12)}
+                                                style={{ height: '35px' }}
+                                            >
+                                                <span className="me-2">&#x25BC;</span>Load More
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => setShowCategoryCreateModal(true)}>

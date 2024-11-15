@@ -170,14 +170,10 @@ public class AuthenticationController {
             // Extract tokens from the response body
             Map<String, String> responseBody = response.getBody();
             if (responseBody != null) {
-                String accessToken = responseBody.get("access_token");
-                String refreshToken = responseBody.get("refresh_token");
                 String idToken = responseBody.get("id_token");
     
                 // Return the tokens in the response
                 Map<String, String> tokens = new HashMap<>();
-                tokens.put("accessToken", accessToken);
-                tokens.put("refreshToken", refreshToken);
                 tokens.put("idToken", idToken);
 
                 // Add CORS headers to the response
