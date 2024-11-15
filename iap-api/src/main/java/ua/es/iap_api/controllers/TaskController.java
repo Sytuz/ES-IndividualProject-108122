@@ -17,7 +17,8 @@ import org.springframework.data.domain.Pageable;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -55,16 +56,19 @@ public class TaskController {
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<Task>> getTasks(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal Jwt jwt,
             Pageable pageable,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Long categoryId) {
 
-        logger.info("Attempting to retrieve tasks for user: {}", userDetails.getUsername());
+        String userSub = jwt.getClaim("sub");
+        String userName = jwt.getClaim("username");
+
+        logger.info("Attempting to get tasks for user: {} ({})", userName, userSub);
+        
         logger.info("Status: {}, Category ID: {}", status, categoryId);
 
-        String userEmail = userDetails.getUsername(); // Extract email from token subject
-        Page<Task> tasks = taskService.findTasksByUserEmailAndFilters(userEmail, status, categoryId, pageable);
+        Page<Task> tasks = taskService.findTasksByUserSubAndFilters(userSub, status, categoryId, pageable);
         return ResponseEntity.ok(tasks);
     }
 
@@ -77,13 +81,15 @@ public class TaskController {
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Task> createTask(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody Task task) {
 
-        logger.info("Attempting to create a new task for user: {}", userDetails.getUsername());
+        String userSub = jwt.getClaim("sub");
+        String userName = jwt.getClaim("username");
 
-        String userEmail = userDetails.getUsername(); // Extract email from token subject
-        task.setUserEmail(userEmail);
+        logger.info("Attempting to create a new task for user: {} ({})", userName, userSub);
+        
+        task.setUserSub(userSub);
         Task newTask = taskService.save(task);
 
         if (newTask == null) {
@@ -101,17 +107,22 @@ public class TaskController {
     @DeleteMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteTask(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody Long taskId) {
 
-        logger.info("Attempting to delete task for user: {}", userDetails.getUsername());
+        String userSub = jwt.getClaim("sub");
+        String userName = jwt.getClaim("username");
 
-        String userEmail = userDetails.getUsername(); // Extract email from token subject
+        logger.info("Attempting to delete task for user: {} ({})", userName, userSub);
+
         Task task = taskService.findById(taskId);
-        if (task == null || !task.getUserEmail().equals(userEmail)) {
+
+        if (task == null || !task.getUserSub().equals(userSub)) {
+            logger.error("Delete task failed for user: {} ({})", userName, userSub);
             return ResponseEntity.badRequest().build();
         }
         taskService.deleteById(taskId);
+        logger.info("Task deleted successfully for user: {} ({})", userName, userSub);
         return ResponseEntity.noContent().build();
     }
 
@@ -124,21 +135,23 @@ public class TaskController {
     @PutMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Task> editTask(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody Task task) {
+        
+        String userSub = jwt.getClaim("sub");
+        String userName = jwt.getClaim("username");
 
-        logger.info("Attempting to edit task for user: {}", userDetails.getUsername());
+        logger.info("Attempting to edit task for user: {} ({})", userName, userSub);
 
-        String userEmail = userDetails.getUsername(); // Extract email from token subject
         if (task.getId() == null) {
             return ResponseEntity.badRequest().build();
         }
 
         Task oldTask = taskService.findById(task.getId());
-        if (oldTask == null || !oldTask.getUserEmail().equals(userEmail)) {
+        if (oldTask == null || !oldTask.getUserSub().equals(userSub)) {
             return ResponseEntity.badRequest().build();
         }
-        task.setUserEmail(userEmail);
+        task.setUserSub(userSub);
         Task editedTask = taskService.save(task);
         return ResponseEntity.ok(editedTask);
     }

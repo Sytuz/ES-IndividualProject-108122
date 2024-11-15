@@ -7,6 +7,8 @@ import { useRouter } from 'next/router';
 import { API_URL } from '../../api_url';
 import TaskModal from '@/components/TaskModal';
 import CategoryModal from '@/components/CategoryModal';
+import Cookies from 'js-cookie';  // Import js-cookie
+import { jwtDecode } from "jwt-decode";
 
 const Dashboard = () => {
     const router = useRouter();
@@ -37,38 +39,6 @@ const Dashboard = () => {
         'COMPLETED': 'Completed',
     };
 
-    // Get the username from the session token, to put on navbar
-    useEffect(() => {
-        const sessionToken = sessionStorage.getItem('sessionToken');
-        const fetchUsername = async () => {
-            try {
-                const response = await fetch(`${API_URL}/users/username`, {
-                    method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${sessionToken}`,
-                    },
-                });
-
-                if (response.ok) {
-                    const username = await response.text(); // Directly parse the plain text response
-                    setUsername(username);
-                } else {
-                    console.error('Failed to fetch username');
-                    router.push('/login'); // Redirect to login if not authorized
-                }
-            } catch (error) {
-                console.error('Error fetching username:', error);
-                router.push('/login'); // Redirect on error
-            }
-        };
-
-        if (sessionToken) {
-            fetchUsername();
-        } else {
-            router.push('/login');
-        }
-    }, []);
-
     // Make the body a little darker
     useEffect(() => {
         document.body.classList.add('darkbg');
@@ -80,12 +50,12 @@ const Dashboard = () => {
 
     // Function to fetch tasks from the API
     const fetchTasks = async (page = 0, size = 6, sort = 'id,desc') => {
-        const sessionToken = sessionStorage.getItem('sessionToken');
+        const token = Cookies.get('idToken');
         try {
             const queryParams = `page=${page}&size=${size}&sort=${sortOption}${filterStatus ? `&status=${filterStatus}` : ''}${filterCategory ? `&categoryId=${filterCategory}` : ''}`;
             const response = await fetch(`${API_URL}/tasks?${queryParams}`, {
                 headers: {
-                    'Authorization': `Bearer ${sessionToken}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
             if (response.ok) {
@@ -100,12 +70,13 @@ const Dashboard = () => {
     };
 
     // Function to fetch categories from the API
-    const fetchCategories = async () => {
-        const sessionToken = sessionStorage.getItem('sessionToken');
+    const fetchCategories = async (page = 0, size = 6) => {
+        const token = Cookies.get('idToken');
         try {
-            const response = await fetch(`${API_URL}/categories?sort=id,desc`, {
+            const queryParams = `page=${page}&size=${size}&sort=id,desc`;
+            const response = await fetch(`${API_URL}/categories?${queryParams}`, {
                 headers: {
-                    'Authorization': `Bearer ${sessionToken}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
             if (response.ok) {
@@ -123,6 +94,12 @@ const Dashboard = () => {
     useEffect(() => {
         fetchCategories();
         fetchTasks();
+        const token = Cookies.get('idToken');
+        if (!token) {
+            router.push('/');
+        }
+        const decodedToken = jwtDecode(token);
+        setUsername(decodedToken['cognito:username']);
     }, [sortOption, filterStatus, filterCategory]);
 
     const handleSortChange = (newSortOption) => {
@@ -140,14 +117,14 @@ const Dashboard = () => {
 
     {/* Function to edit a category */ }
     const onEditCategory = async (editedCategoryData) => {
-        const sessionToken = sessionStorage.getItem('sessionToken');
+        const token = Cookies.get('idToken');
         console.log('Edited category data:', editedCategoryData);
         try {
             const response = await fetch(`${API_URL}/categories`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionToken}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(editedCategoryData)
             });
@@ -176,13 +153,13 @@ const Dashboard = () => {
 
     {/* Function to delete a category */ }
     const onDeleteCategory = async (deleteDTO) => {
-        const sessionToken = sessionStorage.getItem('sessionToken');
+        const token = Cookies.get('idToken');
         try {
             const response = await fetch(`${API_URL}/categories`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionToken}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(deleteDTO)
             });
@@ -211,13 +188,13 @@ const Dashboard = () => {
 
     {/* Function to create a category */ }
     const onCreateCategory = async (newCategoryData) => {
-        const sessionToken = sessionStorage.getItem('sessionToken');
+        const token = Cookies.get('idToken');
         try {
             const response = await fetch(`${API_URL}/categories`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionToken}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(newCategoryData)
             });
@@ -250,14 +227,14 @@ const Dashboard = () => {
 
     {/* Function to edit a task */ }
     const onEditTask = async (editedTaskData) => {
-        const sessionToken = sessionStorage.getItem('sessionToken');
+        const token = Cookies.get('idToken');
         console.log('Edited task data:', editedTaskData);
         try {
             const response = await fetch(`${API_URL}/tasks`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionToken}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(editedTaskData)
             });
@@ -287,13 +264,13 @@ const Dashboard = () => {
 
     {/* Function to delete a task */ }
     const onDeleteTask = async (id) => {
-        const sessionToken = sessionStorage.getItem('sessionToken');
+        const token = Cookies.get('idToken');
         try {
             const response = await fetch(`${API_URL}/tasks`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionToken}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: id
             });
@@ -321,13 +298,13 @@ const Dashboard = () => {
 
     {/* Function to create a task */ }
     const onCreateTask = async (newTaskData) => {
-        const sessionToken = sessionStorage.getItem('sessionToken');
+        const token = Cookies.get('idToken');
         try {
             const response = await fetch(`${API_URL}/tasks`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionToken}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(newTaskData)
             });
@@ -436,7 +413,15 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                                 <div className="card-body overflow-auto" style={{ maxHeight: '70vh' }}>
-                                    {tasks.map(task => (
+                                    {/* Display a message if there are no tasks */}
+                                    {tasks && tasks.length === 0 && (
+                                        <div className="text-center text-muted fst-italic">
+                                            Create new tasks by clicking the 'New Task' button below
+                                        </div>
+                                    )}
+
+                                    {/* Map over tasks and render the Task components */}
+                                    {tasks && tasks.map(task => (
                                         <Task
                                             key={task.id}
                                             category={task.category}
@@ -451,12 +436,19 @@ const Dashboard = () => {
                                             onDelete={onDeleteTask}
                                         />
                                     ))}
+
                                     {/* Center the Load More button */}
-                                    <div className="d-flex justify-content-center mt-2">
-                                        <button className="btn btn-outline-tt-color" onClick={() => fetchTasks(0, tasks.length + 12)} style={{ height: '35px' }}>
-                                            <span className="me-2">&#x25BC;</span>Load More
-                                        </button>
-                                    </div>
+                                    {tasks && tasks.length >= 6 && (
+                                        <div className="d-flex justify-content-center mt-2">
+                                            <button
+                                                className="btn btn-outline-tt-color"
+                                                onClick={() => fetchTasks(0, tasks.length + 12)}
+                                                style={{ height: '35px' }}
+                                            >
+                                                <span className="me-2">&#x25BC;</span>Load More
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => setShowTaskCreateModal(true)}>
@@ -477,7 +469,13 @@ const Dashboard = () => {
                                     <h4>Categories</h4>
                                 </div>
                                 <div className="card-body overflow-auto" style={{ maxHeight: '70vh' }}>
-                                    {categories.map(category => (
+                                    {/* Display a message if there are no categories */}
+                                    {categories && categories.length === 0 && (
+                                        <div className="text-center text-muted fst-italic">
+                                            Create new categories by clicking the 'New Category' button below
+                                        </div>
+                                    )}
+                                    {categories && categories.map(category => (
                                         <Category
                                             id={category.id}
                                             title={category.title}
@@ -486,6 +484,18 @@ const Dashboard = () => {
                                             onDelete={onDeleteCategory}
                                         />
                                     ))}
+                                    {/* Center the Load More button */}
+                                    {categories && categories.length >= 6 && (
+                                        <div className="d-flex justify-content-center mt-2">
+                                            <button
+                                                className="btn btn-outline-tt-color"
+                                                onClick={() => fetchCategories(0, categories.length + 12)}
+                                                style={{ height: '35px' }}
+                                            >
+                                                <span className="me-2">&#x25BC;</span>Load More
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => setShowCategoryCreateModal(true)}>

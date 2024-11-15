@@ -18,8 +18,7 @@ import org.springframework.data.domain.Pageable;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,13 +53,15 @@ public class CategoryController {
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<Category>> getCategories(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal Jwt jwt,
             Pageable pageable) {
-        
-        logger.info("Attempting to retrieve categories for user: {}", userDetails.getUsername());
 
-        String userEmail = userDetails.getUsername(); // Extract email from token subject
-        Page<Category> categories = categoryService.findAllByUserEmail(userEmail, pageable);
+        String userSub = jwt.getClaim("sub");
+        String userName = jwt.getClaim("username");
+
+        logger.info("Attempting to retrieve categories for user: {} ({})", userName, userSub);
+
+        Page<Category> categories = categoryService.findAllByUserSub(userSub, pageable);
         return ResponseEntity.ok(categories);
     }
 
@@ -73,13 +74,15 @@ public class CategoryController {
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Category> createCategory(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody Category category) {
         
-        logger.info("Attempting to create a new category for user: {}", userDetails.getUsername());
+        String userSub = jwt.getClaim("sub");
+        String userName = jwt.getClaim("username");
 
-        String userEmail = userDetails.getUsername(); // Extract email from token subject
-        category.setUserEmail(userEmail);
+        logger.info("Attempting to create a new category for user: {} ({})", userName, userSub);
+
+        category.setUserSub(userSub);
         Category newCategory = categoryService.save(category);
         
         if (newCategory == null) {
@@ -98,14 +101,16 @@ public class CategoryController {
     @DeleteMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteCategory(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody CategoryDelDTO categoryDelDTO) {
         
-        logger.info("Attempting to delete category for user: {}", userDetails.getUsername());
+        String userSub = jwt.getClaim("sub");
+        String userName = jwt.getClaim("username");
+        
+        logger.info("Attempting to delete category for user: {} ({})", userName, userSub);
 
-        String userEmail = userDetails.getUsername(); // Extract email from token subject
         Category category = categoryService.findById(categoryDelDTO.getId());
-        if (category == null || !category.getUserEmail().equals(userEmail)) {
+        if (category == null || !category.getUserSub().equals(userSub)) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -122,21 +127,23 @@ public class CategoryController {
     @PutMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Category> editCategory(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody Category category) {
-        
-        logger.info("Attempting to edit category for user: {}", userDetails.getUsername());
 
-        String userEmail = userDetails.getUsername(); // Extract email from token subject
+        String userSub = jwt.getClaim("sub");
+        String userName = jwt.getClaim("username");        
+        
+        logger.info("Attempting to edit category for user: {} ({})", userName, userSub);
+
         if (category.getId() == null) {
             return ResponseEntity.badRequest().build();
         }
         
         Category oldCategory = categoryService.findById(category.getId());
-        if (oldCategory == null || !oldCategory.getUserEmail().equals(userEmail)) {
+        if (oldCategory == null || !oldCategory.getUserSub().equals(userSub)) {
             return ResponseEntity.badRequest().build();
         }
-        category.setUserEmail(userEmail);
+        category.setUserSub(userSub);
         Category editedCategory = categoryService.save(category);
         return ResponseEntity.ok(editedCategory);
     }

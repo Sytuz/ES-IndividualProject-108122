@@ -66,7 +66,7 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-    public Page<Category> findAllByUserEmail(String email, Pageable pageable) {
-        return categoryRepository.findAllByUserEmail(email, pageable);
+    public Page<Category> findAllByUserSub(String sub, Pageable pageable) {
+        return categoryRepository.findAllByUserSub(sub, pageable);
     }
 }

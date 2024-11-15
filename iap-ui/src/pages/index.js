@@ -1,9 +1,17 @@
 import Head from "next/head";
 import Navbar from "@/components/navbar";
 import Image from "next/image";
-import Link from "next/link"; // Assuming you're using Next.js's Link for navigation
+import { useEffect } from "react";
+
 
 export default function Home() {
+  const handleGettingStarted = () => {
+    // Make sure this runs only on the client-side
+    if (typeof window !== "undefined") {
+      window.location.href = "https://tasktracker.auth.eu-south-2.amazoncognito.com/signup?response_type=code&client_id=66v9ved46iqmn4ffs9saan6kc&redirect_uri=http://localhost:3000/login";
+    }
+  };  
+
   return (
     <main>
       <Navbar />
@@ -40,11 +48,11 @@ export default function Home() {
             <h5 className="mt-4">Filter and sort as needed</h5>
           </div>
         </div>
-        <div className="row justify-content-center" style={{marginTop: "100px"}}>
+        <div className="row justify-content-center" style={{ marginTop: "100px" }}>
           <div className="col-auto">
-            <Link href="login" className="get-started-btn nav-link py-3 px-5 px-lg-5 rounded-pill tt-bgcolor text-white fs-5 fw-bold">
+            <button onClick={handleGettingStarted} className="get-started-btn nav-link py-3 px-5 px-lg-5 rounded-pill tt-bgcolor text-white fs-5 fw-bold">
               Get Started
-            </Link>
+            </button>
           </div>
         </div>
       </div>

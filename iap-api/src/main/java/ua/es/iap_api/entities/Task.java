@@ -26,8 +26,8 @@ public class Task {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "user_email", nullable = false)
-    private String userEmail;
+    @Column(name = "user_sub", nullable = false)
+    private String userSub;
 
     @Column(name = "priority", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -55,16 +55,16 @@ public class Task {
         this.description = description;
     }
 
-    public Task(String title, String description, String userEmail) {
+    public Task(String title, String description, String userSub) {
         this.title = title;
         this.description = description;
-        this.userEmail = userEmail;
+        this.userSub = userSub;
     }
 
-    public Task(String title, String description, String userEmail, Category category) {
+    public Task(String title, String description, String userSub, Category category) {
         this.title = title;
         this.description = description;
-        this.userEmail = userEmail;
+        this.userSub = userSub;
         this.category = category;
     }
 }

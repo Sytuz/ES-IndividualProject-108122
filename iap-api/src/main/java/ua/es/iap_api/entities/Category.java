@@ -29,11 +29,11 @@ public class Category {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "user_email", nullable = false)
-    private String userEmail;
+    @Column(name = "user_sub", nullable = false)
+    private String userSub;
 
-    public Category(String title, String userEmail) {
+    public Category(String title, String userSub) {
         this.title = title;
-        this.userEmail = userEmail;
+        this.userSub = userSub;
     }
 }

@@ -12,12 +12,12 @@ import org.springframework.stereotype.Repository;
 public interface TaskRepository extends JpaRepository<Task, Long> {
     void deleteByCategoryId(Long categoryId);
     Page<Task> findAllByCategoryId(Long categoryId, Pageable pageable);
-    Page<Task> findAllByUserEmail(String userEmail, Pageable pageable);
+    Page<Task> findAllByUserSub(String userSub, Pageable pageable);
     Page<Task> findAll(Pageable pageable);
 
-    Page<Task> findAllByUserEmailAndCompletionStatus(String email, CompletionStatus status, Pageable pageable);
-    Page<Task> findAllByUserEmailAndCategoryId(String email, Long categoryId, Pageable pageable);
-    Page<Task> findAllByUserEmailAndCategoryIdIsNull(String email, Pageable pageable);
-    Page<Task> findAllByUserEmailAndCompletionStatusAndCategoryId(String email, CompletionStatus status, Long categoryId, Pageable pageable);
-    Page<Task> findAllByUserEmailAndCompletionStatusAndCategoryIdIsNull(String email, CompletionStatus status, Pageable pageable);
+    Page<Task> findAllByUserSubAndCompletionStatus(String sub, CompletionStatus status, Pageable pageable);
+    Page<Task> findAllByUserSubAndCategoryId(String sub, Long categoryId, Pageable pageable);
+    Page<Task> findAllByUserSubAndCategoryIdIsNull(String sub, Pageable pageable);
+    Page<Task> findAllByUserSubAndCompletionStatusAndCategoryId(String sub, CompletionStatus status, Long categoryId, Pageable pageable);
+    Page<Task> findAllByUserSubAndCompletionStatusAndCategoryIdIsNull(String sub, CompletionStatus status, Pageable pageable);
 }
