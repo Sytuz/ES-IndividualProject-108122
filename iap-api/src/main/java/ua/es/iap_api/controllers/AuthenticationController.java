@@ -26,8 +26,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
@@ -103,7 +101,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "200", description = "User login successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
             @ApiResponse(responseCode = "400", description = "Invalid credentials"),
     })
-    @PostMapping("/login")
+    @PostMapping("/login_deprecated")
     public ResponseEntity<Map<String, String>> loginUser(@RequestBody LoginDTO loginData) {
         logger.info("Attempting to login a user");
 
@@ -136,7 +134,7 @@ public class AuthenticationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-    @PostMapping("/exchange")
+    @PostMapping("/login")
     public ResponseEntity<Map<String, String>> exchangeCodeForTokens(@RequestBody Map<String, String> requestBody) {
         String code = requestBody.get("code");
     

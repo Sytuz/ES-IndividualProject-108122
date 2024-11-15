@@ -11,7 +11,7 @@ const Navbar = ({username}) => {
   return (
     <nav className="navbar navbar-expand-lg bg-light fixed-top shadow">
       <div className="container-fluid" style={{ width: '90%' }}>
-        <Link href="/" className="navbar-brand text-black fs-4 fw-bold">
+        <Link href="#" className="navbar-brand text-black fs-4 fw-bold">
           TaskTracker
         </Link>
         <button

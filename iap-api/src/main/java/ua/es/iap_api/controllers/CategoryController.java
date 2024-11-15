@@ -51,6 +51,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<Category>> getCategories(
             @AuthenticationPrincipal Jwt jwt,
             Pageable pageable) {

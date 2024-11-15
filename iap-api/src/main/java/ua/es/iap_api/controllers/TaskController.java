@@ -54,6 +54,7 @@ public class TaskController {
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<Task>> getTasks(
             @AuthenticationPrincipal Jwt jwt,
             Pageable pageable,

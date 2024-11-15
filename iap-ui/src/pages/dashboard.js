@@ -98,7 +98,7 @@ const Dashboard = () => {
             router.push('/');
         }
         const decodedToken = jwtDecode(token);
-        setUsername(decodedToken['username']);
+        setUsername(decodedToken['cognito:username']);
     }, [sortOption, filterStatus, filterCategory]);
 
     const handleSortChange = (newSortOption) => {
