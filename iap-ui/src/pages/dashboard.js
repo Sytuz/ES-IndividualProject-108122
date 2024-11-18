@@ -9,6 +9,7 @@ import TaskModal from '@/components/TaskModal';
 import CategoryModal from '@/components/CategoryModal';
 import Cookies from 'js-cookie';  // Import js-cookie
 import { jwtDecode } from "jwt-decode";
+import Toasts from '@/components/toasts';
 
 const Dashboard = () => {
     const router = useRouter();
@@ -23,6 +24,14 @@ const Dashboard = () => {
 
     const [tasks, setTasks] = useState([]);
     const [categories, setCategories] = useState([]);
+
+    const [toasts, setToasts] = useState([]);
+
+    const addToast = (message, type) => {
+        const id = Date.now(); // Unique ID for each toast
+        setToasts((prevToasts) => [...prevToasts, { id, message, type }]);
+        setTimeout(() => setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id)), 5000);
+    };
 
     const sortOptionToText = {
         'id,desc': 'None',
@@ -131,13 +140,13 @@ const Dashboard = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Category edited:', data);
-                alert('Category edited successfully!');
+                addToast('Category edited successfully!', 'success');
                 fetchCategories(); // Fetch categorys again to update the list
             } else {
                 // If the response code is 400, warn the user about invalid input
                 if (response.status === 400) {
                     console.error('Invalid input for category edition');
-                    alert('Invalid input for category edition');
+                    addToast('Invalid input for category edition', 'danger');
                 }
                 else if (response.status === 403) {
                     console.error('Unauthorized to edit category');
@@ -147,6 +156,7 @@ const Dashboard = () => {
             }
         } catch (error) {
             console.error('Error editing category:', error);
+            addToast('Error editing category', 'danger');
         }
 
     };
@@ -165,14 +175,14 @@ const Dashboard = () => {
             });
             if (response.ok) {
                 console.log('Category deleted: ', deleteDTO.id);
-                alert('Category deleted successfully!');
+                addToast('Category deleted successfully!', 'success');
                 fetchCategories(); // Fetch categories again to update the list
                 fetchTasks(); // Fetch tasks again to update the list
             } else {
                 // If the response code is 400, warn the user about invalid input
                 if (response.status === 400) {
                     console.error('Invalid input for category deletion');
-                    alert('Invalid input for category deletion');
+                    addToast('Invalid input for category deletion', 'error');
                 }
                 else if (response.status === 403) {
                     console.error('Unauthorized to delete category');
@@ -181,7 +191,8 @@ const Dashboard = () => {
                 console.error('Failed to delete category');
             }
         } catch (error) {
-            console.error('Error delete category:', error);
+            console.error('Error deleting category:', error);
+            addToast('Error deleting category', 'error');
         }
 
     };
@@ -201,13 +212,13 @@ const Dashboard = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Category created:', data);
-                alert('Category created successfully!');
+                addToast('Category created successfully!', 'success');
                 fetchCategories(); // Fetch categories again to update the list
             } else {
                 // If the response code is 400, warn the user about invalid input
                 if (response.status === 400) {
                     console.error('Invalid input for category creation');
-                    alert('Invalid input for category creation');
+                    addToast('Invalid input for category creation', 'error');
                 }
                 else if (response.status === 403) {
                     console.error('Unauthorized to create category');
@@ -217,6 +228,7 @@ const Dashboard = () => {
             }
         } catch (error) {
             console.error('Error creating category:', error);
+            addToast('Error creating category:', 'error');
         }
     }
 
@@ -241,13 +253,13 @@ const Dashboard = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Task edited:', data);
-                alert('Task edited successfully!');
+                addToast('Task edited successfully!', 'success');
                 fetchTasks(); // Fetch tasks again to update the list
             } else {
                 // If the response code is 400, warn the user about invalid input
                 if (response.status === 400) {
                     console.error('Invalid input for task edition');
-                    alert('Invalid input for task edition');
+                    addToast('Invalid input for task edition', 'danger');
                 }
                 else if (response.status === 403) {
                     console.error('Unauthorized to edit task');
@@ -257,6 +269,7 @@ const Dashboard = () => {
             }
         } catch (error) {
             console.error('Error editing task:', error);
+            addToast('Error editing task:', 'danger');
         }
 
     };
@@ -276,13 +289,13 @@ const Dashboard = () => {
             });
             if (response.ok) {
                 console.log('Task deleted: ', id);
-                alert('Task deleted successfully!');
+                addToast('Task deleted successfully!', 'success');
                 fetchTasks(); // Fetch tasks again to update the list
             } else {
                 // If the response code is 400, warn the user about invalid input
                 if (response.status === 400) {
                     console.error('Invalid input for task deletion');
-                    alert('Invalid input for task deletion');
+                    addToast('Invalid input for task deletion', 'danger');
                 }
                 else if (response.status === 403) {
                     console.error('Unauthorized to delete task');
@@ -291,7 +304,8 @@ const Dashboard = () => {
                 console.error('Failed to delete task');
             }
         } catch (error) {
-            console.error('Error delete task:', error);
+            console.error('Error deleting task:', error);
+            addToast('Error deleting task', 'danger');
         }
 
     };
@@ -311,13 +325,13 @@ const Dashboard = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Task created:', data);
-                alert('Task created successfully!');
+                addToast('Task created successfully!', 'success');
                 fetchTasks(); // Fetch tasks again to update the list
             } else {
                 // If the response code is 400, warn the user about invalid input
                 if (response.status === 400) {
                     console.error('Invalid input for task creation');
-                    alert('Invalid input for task creation');
+                    addToast('Invalid input for task creation', 'danger');
                 }
                 else if (response.status === 403) {
                     console.error('Unauthorized to create task');
@@ -327,6 +341,7 @@ const Dashboard = () => {
             }
         } catch (error) {
             console.error('Error creating task:', error);
+            addToast('Error creating task', 'danger');
         }
     }
 
@@ -348,9 +363,10 @@ const Dashboard = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-
+            
             {/* Main Wrapper - adjusts height minus navbar */}
             <div className="d-flex flex-column" style={{ height: 'calc(95vh - 100px)', marginTop: '100px' }}>
+                <Toasts toasts={toasts} setToasts={setToasts} />
                 <div className="container-fluid flex-grow-1 d-flex flex-column">
                     <div className="row flex-grow-1" style={{ height: '100%' }}>
                         {/* Tasks Section */}
@@ -412,7 +428,7 @@ const Dashboard = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="card-body overflow-auto" style={{ maxHeight: '70vh' }}>
+                                <div className="card-body overflow-auto" style={{ height:'70vh', maxHeight: '70vh' }}>
                                     {/* Display a message if there are no tasks */}
                                     {tasks && tasks.length === 0 && (
                                         <div className="text-center text-muted fst-italic">
@@ -468,7 +484,7 @@ const Dashboard = () => {
                                 <div className="card-header text-center">
                                     <h4>Categories</h4>
                                 </div>
-                                <div className="card-body overflow-auto" style={{ maxHeight: '70vh' }}>
+                                <div className="card-body overflow-auto" style={{ height:'70vh', maxHeight: '70vh' }}>
                                     {/* Display a message if there are no categories */}
                                     {categories && categories.length === 0 && (
                                         <div className="text-center text-muted fst-italic">
