@@ -3,11 +3,6 @@ package ua.es.iap_api.controllers;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-import ua.es.iap_api.services.UserService;
-import ua.es.iap_api.services.JwtService;
-
-import org.springframework.security.core.userdetails.UserDetails;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,9 +30,6 @@ import java.util.Map;
 @Tag(name = "Authentication Controller", description = "Public API for managing user authentication")
 public class AuthenticationController {
 
-    private final UserService userService;
-    private final JwtService jwtService;
-
     @Value("${spring.security.oauth2.client.registration.cognito.clientId}")
     private String clientId; // Your Cognito app client ID
 
@@ -55,15 +47,13 @@ public class AuthenticationController {
     private final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @Autowired
-    public AuthenticationController(UserService userService, JwtService jwtService, RestTemplate restTemplate) {
-        this.userService = userService;
-        this.jwtService = jwtService;
+    public AuthenticationController(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     @Operation(summary = "Login a user", description = "Login a user and return access and refresh tokens")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Successful deletion"),
+            @ApiResponse(responseCode = "200", description = "Successful login", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
             @ApiResponse(responseCode = "401", description = "Token exchange failed"),
     })
     @PostMapping("/login")

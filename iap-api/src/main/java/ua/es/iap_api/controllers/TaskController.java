@@ -63,9 +63,7 @@ public class TaskController {
             @RequestParam(required = false) Long categoryId) {
 
         String userSub = jwt.getClaim("sub");
-        String userName = jwt.getClaim("username");
-
-        logger.info("Attempting to get tasks for user: {} ({})", userName, userSub);
+        logger.info("Attempting to get tasks for user: {}", userSub);
         
         logger.info("Status: {}, Category ID: {}", status, categoryId);
 
@@ -87,9 +85,7 @@ public class TaskController {
             @RequestBody Task task) {
 
         String userSub = jwt.getClaim("sub");
-        String userName = jwt.getClaim("username");
-
-        logger.info("Attempting to create a new task for user: {} ({})", userName, userSub);
+        logger.info("Attempting to create a new task for user: {}", userSub);
         
         task.setUserSub(userSub);
         Task newTask = taskService.save(task);
@@ -114,18 +110,16 @@ public class TaskController {
             @RequestBody Long taskId) {
 
         String userSub = jwt.getClaim("sub");
-        String userName = jwt.getClaim("username");
-
-        logger.info("Attempting to delete task for user: {} ({})", userName, userSub);
+        logger.info("Attempting to delete task for user: {}", userSub);
 
         Task task = taskService.findById(taskId);
 
         if (task == null || !task.getUserSub().equals(userSub)) {
-            logger.error("Delete task failed for user: {} ({})", userName, userSub);
+            logger.error("Delete task failed for user: {}", userSub);
             return ResponseEntity.badRequest().build();
         }
         taskService.deleteById(taskId);
-        logger.info("Task deleted successfully for user: {} ({})", userName, userSub);
+        logger.info("Task deleted successfully for user: {}", userSub);
         return ResponseEntity.noContent().build();
     }
 
@@ -143,9 +137,7 @@ public class TaskController {
             @RequestBody Task task) {
         
         String userSub = jwt.getClaim("sub");
-        String userName = jwt.getClaim("username");
-
-        logger.info("Attempting to edit task for user: {} ({})", userName, userSub);
+        logger.info("Attempting to edit task for user: {}", userSub);
 
         if (task.getId() == null) {
             return ResponseEntity.badRequest().build();

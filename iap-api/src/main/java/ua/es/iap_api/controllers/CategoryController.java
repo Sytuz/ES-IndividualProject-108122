@@ -58,9 +58,7 @@ public class CategoryController {
             Pageable pageable) {
 
         String userSub = jwt.getClaim("sub");
-        String userName = jwt.getClaim("username");
-
-        logger.info("Attempting to retrieve categories for user: {} ({})", userName, userSub);
+        logger.info("Attempting to retrieve categories for user: {}", userSub);
 
         Page<Category> categories = categoryService.findAllByUserSub(userSub, pageable);
         return ResponseEntity.ok(categories);
@@ -80,9 +78,7 @@ public class CategoryController {
             @RequestBody Category category) {
         
         String userSub = jwt.getClaim("sub");
-        String userName = jwt.getClaim("username");
-
-        logger.info("Attempting to create a new category for user: {} ({})", userName, userSub);
+        logger.info("Attempting to create a new category for user: {}", userSub);
 
         category.setUserSub(userSub);
         Category newCategory = categoryService.save(category);
@@ -108,9 +104,7 @@ public class CategoryController {
             @RequestBody CategoryDelDTO categoryDelDTO) {
         
         String userSub = jwt.getClaim("sub");
-        String userName = jwt.getClaim("username");
-        
-        logger.info("Attempting to delete category for user: {} ({})", userName, userSub);
+        logger.info("Attempting to delete category for user: {}", userSub);
 
         Category category = categoryService.findById(categoryDelDTO.getId());
         if (category == null || !category.getUserSub().equals(userSub)) {
@@ -135,9 +129,7 @@ public class CategoryController {
             @RequestBody Category category) {
 
         String userSub = jwt.getClaim("sub");
-        String userName = jwt.getClaim("username");        
-        
-        logger.info("Attempting to edit category for user: {} ({})", userName, userSub);
+        logger.info("Attempting to edit category for user: {}", userSub);
 
         if (category.getId() == null) {
             return ResponseEntity.badRequest().build();
