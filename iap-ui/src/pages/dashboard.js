@@ -221,7 +221,7 @@ const Dashboard = () => {
                 // If the response code is 400, warn the user about invalid input
                 if (response.status === 400) {
                     console.error('Invalid input for category deletion');
-                    addToast('Invalid input for category deletion', 'error');
+                    addToast('Invalid input for category deletion', 'danger');
                 }
                 else if (response.status === 403) {
                     console.error('Unauthorized to delete category');
@@ -231,7 +231,7 @@ const Dashboard = () => {
             }
         } catch (error) {
             console.error('Error deleting category:', error);
-            addToast('Error deleting category', 'error');
+            addToast('Error deleting category', 'danger');
         }
 
     };
@@ -257,7 +257,7 @@ const Dashboard = () => {
                 // If the response code is 400, warn the user about invalid input
                 if (response.status === 400) {
                     console.error('Invalid input for category creation');
-                    addToast('Invalid input for category creation', 'error');
+                    addToast('Invalid input for category creation', 'danger');
                 }
                 else if (response.status === 403) {
                     console.error('Unauthorized to create category');
@@ -267,7 +267,7 @@ const Dashboard = () => {
             }
         } catch (error) {
             console.error('Error creating category:', error);
-            addToast('Error creating category:', 'error');
+            addToast('Error creating category:', 'danger');
         }
     }
 
