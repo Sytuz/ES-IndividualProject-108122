@@ -44,10 +44,18 @@ public class CategoryService {
         return categoryRepository.existsById(id);
     }
 
+    public boolean categoryExistsByUserSubAndTitle(String sub, String title) {
+        return categoryRepository.existsByUserSubAndTitle(sub, title);
+    }
+
     public boolean isCategoryValid(Category category) {
         if (category.getTitle() == null || category.getTitle().equalsIgnoreCase("None")
                 || category.getTitle().equalsIgnoreCase("All")) {
             return false; // Explicitly reject null or invalid titles
+        }
+
+        if (categoryExistsByUserSubAndTitle(category.getUserSub(), category.getTitle())) {
+            return false; // Reject duplicate titles
         }
 
         boolean isTitleValid = category.getTitle().length() > minTitleLength
