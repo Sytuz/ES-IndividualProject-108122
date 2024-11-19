@@ -25,6 +25,45 @@ const Dashboard = () => {
     const [tasks, setTasks] = useState([]);
     const [categories, setCategories] = useState([]);
 
+    const [taskData, setTaskData] = useState({
+        id: null,
+        title: '',
+        description: '',
+        completionStatus: 'IDLE',
+        priority: 'UNDEFINED',
+        deadline: '',
+        category: null,
+    });
+
+    const handleNewTask = () => {
+        setTaskData({
+            id: null,
+            title: '',
+            description: '',
+            completionStatus: 'IDLE',
+            priority: 'UNDEFINED',
+            deadline: '',
+            category: null,
+        });
+        console.log('reset task data:', taskData);
+        setShowTaskCreateModal(true);
+    };
+
+    const [categoryData, setCategoryData] = useState({
+        id: null,
+        title: '',
+        description: '',
+    });
+
+    const handleNewCategory = () => {
+        setCategoryData({
+            id: null,
+            title: '',
+            description: '',
+        });
+        setShowCategoryCreateModal(true);
+    };
+
     const [toasts, setToasts] = useState([]);
 
     const addToast = (message, type) => {
@@ -467,13 +506,14 @@ const Dashboard = () => {
                                     )}
                                 </div>
                             </div>
-                            <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => setShowTaskCreateModal(true)}>
+                            <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => handleNewTask()}>
                                 <span className="me-2">+</span>New Task
                             </button>
                             <TaskModal
                                 show={showTaskCreateModal}
                                 onClose={() => setShowTaskCreateModal(false)}
                                 onSave={handleCreateTask}
+                                initialData={taskData}
                                 categories={categories}
                             />
 
@@ -493,6 +533,7 @@ const Dashboard = () => {
                                     )}
                                     {categories && categories.map(category => (
                                         <Category
+                                            key={category.id}
                                             id={category.id}
                                             title={category.title}
                                             description={category.description}
@@ -514,13 +555,14 @@ const Dashboard = () => {
                                     )}
                                 </div>
                             </div>
-                            <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => setShowCategoryCreateModal(true)}>
+                            <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => handleNewCategory()}>
                                 <span className="me-2">+</span>New Category
                             </button>
                             <CategoryModal
                                 show={showCategoryCreateModal}
                                 onClose={() => setShowCategoryCreateModal(false)}
                                 onSave={handleCreateCategory}
+                                initialData={categoryData}
                             />
                         </div>
                     </div>

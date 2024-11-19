@@ -1,10 +1,7 @@
-// src/components/TaskModal.js
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-const TaskModal = ({ show, onClose, onSave, initialData = {}, categories, isEditMode = false }) => {
-    const [id, setId] = useState(initialData.id || null);
+const TaskModal = ({ show, onClose, onSave, initialData, categories, isEditMode = false }) => {
     const [title, setTitle] = useState(initialData.title || '');
     const [description, setDescription] = useState(initialData.description || '');
     const [completionStatus, setCompletionStatus] = useState(initialData.completionStatus || 'IDLE');
@@ -12,24 +9,41 @@ const TaskModal = ({ show, onClose, onSave, initialData = {}, categories, isEdit
     const [deadline, setDeadline] = useState(initialData.deadline || '');
     const [category, setCategory] = useState(initialData.category || null);
 
+    // Update the modal fields when initialData changes (e.g., switching between tasks)
+    useEffect(() => {
+        setTitle(initialData.title || '');
+        setDescription(initialData.description || '');
+        setCompletionStatus(initialData.completionStatus || 'IDLE');
+        setPriority(initialData.priority || 'UNDEFINED');
+        setDeadline(initialData.deadline || '');
+        setCategory(initialData.category || null);
+    }, [initialData]);
+
     const handleSave = () => {
-        onSave({ id, title, description, completionStatus, priority, deadline, category });
-        onClose();
+        onSave({
+            id: initialData.id,
+            title,
+            description,
+            completionStatus,
+            priority,
+            deadline,
+            category,
+        });
     };
 
     return (
         <Modal show={show} onHide={onClose}>
-            <Modal.Header closeButton>
+            <Modal.Header className="py-2" closeButton>
                 <Modal.Title>{isEditMode ? 'Edit Task' : 'Create Task'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form>
                     <Form.Group controlId="formTaskTitle">
                         <Form.Label>Title</Form.Label>
-                        <Form.Control 
-                            type="text" 
-                            value={title} 
-                            onChange={(e) => setTitle(e.target.value)} 
+                        <Form.Control
+                            type="text"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
                             isInvalid={title.length <= 3}
                         />
                         <Form.Control.Feedback type="invalid">
@@ -38,7 +52,7 @@ const TaskModal = ({ show, onClose, onSave, initialData = {}, categories, isEdit
                     </Form.Group>
                     <Form.Group controlId="formTaskDescription" className="mt-3">
                         <Form.Label>Description</Form.Label>
-                        <Form.Control as="textarea" rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />
+                        <Form.Control as="textarea" rows={1} value={description} onChange={(e) => setDescription(e.target.value)} />
                     </Form.Group>
                     <Form.Group controlId="formTaskCompletionStatus" className="mt-3">
                         <Form.Label>Completion Status</Form.Label>
@@ -66,12 +80,12 @@ const TaskModal = ({ show, onClose, onSave, initialData = {}, categories, isEdit
                         <Form.Select
                             value={category?.id || ''}
                             onChange={(e) => {
-                                const selectedCategory = categories.find(cat => cat.id === Number(e.target.value));
+                                const selectedCategory = categories.find((cat) => cat.id === Number(e.target.value));
                                 setCategory(selectedCategory || {});
                             }}
                         >
                             <option value=""></option>
-                            {categories.map(cat => (
+                            {categories.map((cat) => (
                                 <option key={cat.id} value={cat.id}>
                                     {cat.title}
                                 </option>
@@ -81,13 +95,15 @@ const TaskModal = ({ show, onClose, onSave, initialData = {}, categories, isEdit
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>Cancel</Button>
-                <Button 
-                    variant="primary" 
-                    onClick={handleSave} 
+                <Button variant="secondary" onClick={onClose}>
+                    Cancel
+                </Button>
+                <Button
+                    variant="primary"
+                    onClick={handleSave}
                     disabled={title.length <= 3}
                 >
-                    Save
+                    {isEditMode ? 'Save Changes' : 'Create Task'}
                 </Button>
             </Modal.Footer>
         </Modal>
