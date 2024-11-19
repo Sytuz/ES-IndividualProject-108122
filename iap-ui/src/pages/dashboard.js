@@ -111,6 +111,10 @@ const Dashboard = () => {
                 console.log('Tasks:', data.content);
                 setTasks(data.content || []);
             }
+            else if (response.status === 401) {
+                console.error('Session expired');
+                router.push('/'); // Redirect to landing page if not authorized
+            }
         } catch (error) {
             console.error('Error fetching tasks:', error);
             throw error;
@@ -131,6 +135,10 @@ const Dashboard = () => {
                 const data = await response.json();
                 console.log('Categories:', data.content);
                 setCategories(data.content || []);
+            }
+            else if (response.status === 401) {
+                console.error('Session expired');
+                router.push('/'); // Redirect to landing page if not authorized
             }
         } catch (error) {
             console.error('Error fetching categories:', error);
@@ -186,9 +194,13 @@ const Dashboard = () => {
                     console.error('Invalid input for category edition');
                     addToast('Invalid input for category edition', 'danger');
                 }
+                else if (response.status === 401) {
+                    console.error('Session expired');
+                    router.push('/'); // Redirect to landing page if not authorized
+                }
                 else if (response.status === 403) {
                     console.error('Unauthorized to edit category');
-                    router.push('/login'); // Redirect to login if not authorized
+                    router.push('/'); // Redirect to landing page if not authorized
                 }
                 console.error('Failed to edit category');
             }
@@ -222,9 +234,13 @@ const Dashboard = () => {
                     console.error('Invalid input for category deletion');
                     addToast('Invalid input for category deletion', 'danger');
                 }
+                else if (response.status === 401) {
+                    console.error('Session expired');
+                    router.push('/'); // Redirect to landing page if not authorized
+                }
                 else if (response.status === 403) {
                     console.error('Unauthorized to delete category');
-                    router.push('/login'); // Redirect to login if not authorized
+                    router.push('/'); // Redirect to landing page if not authorized
                 }
                 console.error('Failed to delete category');
             }
@@ -258,9 +274,13 @@ const Dashboard = () => {
                     console.error('Invalid input for category creation');
                     addToast('Invalid input for category creation', 'danger');
                 }
+                else if (response.status === 401) {
+                    console.error('Session expired');
+                    router.push('/'); // Redirect to landing page if not authorized
+                }
                 else if (response.status === 403) {
                     console.error('Unauthorized to create category');
-                    router.push('/login'); // Redirect to login if not authorized
+                    router.push('/'); // Redirect to landing page if not authorized
                 }
                 console.error('Failed to create category');
             }
@@ -299,9 +319,13 @@ const Dashboard = () => {
                     console.error('Invalid input for task edition');
                     addToast('Invalid input for task edition', 'danger');
                 }
+                else if (response.status === 401) {
+                    console.error('Session expired');
+                    router.push('/'); // Redirect to landing page if not authorized
+                }
                 else if (response.status === 403) {
                     console.error('Unauthorized to edit task');
-                    router.push('/login'); // Redirect to login if not authorized
+                    router.push('/'); // Redirect to landing page if not authorized
                 }
                 console.error('Failed to edit task');
             }
@@ -335,9 +359,13 @@ const Dashboard = () => {
                     console.error('Invalid input for task deletion');
                     addToast('Invalid input for task deletion', 'danger');
                 }
+                else if (response.status === 401) {
+                    console.error('Session expired');
+                    router.push('/'); // Redirect to landing page if not authorized
+                }
                 else if (response.status === 403) {
                     console.error('Unauthorized to delete task');
-                    router.push('/login'); // Redirect to login if not authorized
+                    router.push('/'); // Redirect to landing page if not authorized
                 }
                 console.error('Failed to delete task');
             }
@@ -371,9 +399,13 @@ const Dashboard = () => {
                     console.error('Invalid input for task creation');
                     addToast('Invalid input for task creation', 'danger');
                 }
+                else if (response.status === 401) {
+                    console.error('Session expired');
+                    router.push('/'); // Redirect to landing page if not authorized
+                }
                 else if (response.status === 403) {
                     console.error('Unauthorized to create task');
-                    router.push('/login'); // Redirect to login if not authorized
+                    router.push('/'); // Redirect to landing page if not authorized
                 }
                 console.error('Failed to create task');
             }

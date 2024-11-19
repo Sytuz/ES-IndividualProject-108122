@@ -48,6 +48,7 @@ public class CategoryController {
     @Operation(summary = "Get user categories", description = "Retrieves all categories for the authenticated user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Category.class))),
+            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
     @GetMapping
@@ -69,6 +70,7 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successful creation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
             @ApiResponse(responseCode = "400", description = "Invalid category data"),
+            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
     @PostMapping
@@ -96,6 +98,7 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successful deletion"),
             @ApiResponse(responseCode = "400", description = "Invalid category data"),
+            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
     @DeleteMapping
@@ -122,6 +125,7 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful edit", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
             @ApiResponse(responseCode = "400", description = "Invalid category data"),
+            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
     @PutMapping
