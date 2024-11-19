@@ -64,11 +64,29 @@ public class TaskService {
     // Existing imports...
 
     public Page<Task> findTasksByUserSubAndFilters(String sub, String status, Long categoryId, Pageable pageable) {
+        boolean customSort = pageable.getSort().stream()
+                .anyMatch(order -> order.getProperty().equalsIgnoreCase("completionStatus"));
+
+        if (customSort) {
+            // Call repository method that includes custom sorting logic
+            CompletionStatus statusParameter = null;
+            if (status != null) {
+                try {
+                    statusParameter = CompletionStatus.valueOf(status);
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Invalid completion status: " + status);
+                }
+            }
+            return taskRepository.findAllByUserSubWithCustomSort(sub, statusParameter, categoryId, pageable);
+        }
+
         if (status != null && categoryId != null) {
             if (categoryId == -1) {
-                return taskRepository.findAllByUserSubAndCompletionStatusAndCategoryIdIsNull(sub, CompletionStatus.valueOf(status), pageable);
+                return taskRepository.findAllByUserSubAndCompletionStatusAndCategoryIdIsNull(sub,
+                        CompletionStatus.valueOf(status), pageable);
             }
-            return taskRepository.findAllByUserSubAndCompletionStatusAndCategoryId(sub, CompletionStatus.valueOf(status), categoryId, pageable);
+            return taskRepository.findAllByUserSubAndCompletionStatusAndCategoryId(sub,
+                    CompletionStatus.valueOf(status), categoryId, pageable);
         } else if (status != null) {
             return taskRepository.findAllByUserSubAndCompletionStatus(sub, CompletionStatus.valueOf(status), pageable);
         } else if (categoryId != null) {
