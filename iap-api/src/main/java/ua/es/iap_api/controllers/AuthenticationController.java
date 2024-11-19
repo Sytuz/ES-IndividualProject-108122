@@ -1,9 +1,8 @@
 package ua.es.iap_api.controllers;
 
-import ua.es.iap_api.dtos.RegisterDTO;
-import ua.es.iap_api.dtos.LoginDTO;
-import ua.es.iap_api.entities.AuthenticationMethod;
-import ua.es.iap_api.entities.User;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
+
 import ua.es.iap_api.services.UserService;
 import ua.es.iap_api.services.JwtService;
 
@@ -62,132 +61,83 @@ public class AuthenticationController {
         this.restTemplate = restTemplate;
     }
 
-    @Operation(summary = "Register a user", description = "Creates a new user in the system")
+    @Operation(summary = "Login a user", description = "Login a user and return access and refresh tokens")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid user data"),
-            @ApiResponse(responseCode = "409", description = "User already exists")
+            @ApiResponse(responseCode = "204", description = "Successful deletion"),
+            @ApiResponse(responseCode = "401", description = "Token exchange failed"),
     })
-    @PostMapping("/register")
-    public ResponseEntity<User> createUser(@RequestBody RegisterDTO newUser) {
-        logger.info("Attempting to create a new user");
-
-        // Create a new user object with the data from the request
-        User user = new User();
-        user.setUsername(newUser.getUsername());
-        user.setEmail(newUser.getEmail());
-        user.setPassword(newUser.getPassword());
-        user.setAuthenticationMethod(AuthenticationMethod.CREDENTIALS);
-
-        // Check data validity
-        if (!userService.isNewUserValid(user)) {
-            logger.error("Invalid user");
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        // Check if the user already exists by its email
-        if (userService.userExistsByEmail(user.getEmail())) {
-            logger.error("User email already exists");
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-
-        userService.createUser(user);
-        logger.info("User created successfully");
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @Operation(summary = "Login a user", description = "Logs in a user to the system")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User login successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid credentials"),
-    })
-    @PostMapping("/login_deprecated")
-    public ResponseEntity<Map<String, String>> loginUser(@RequestBody LoginDTO loginData) {
-        logger.info("Attempting to login a user");
-
-        String email = loginData.getEmail();
-        String password = loginData.getPassword();
-
-        // Check if the user exists by its email
-        if (!userService.userExistsByEmail(email)) {
-            logger.error("User not found");
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        // Get the user by its email
-        UserDetails user = userService.loadUserByEmail(email);
-
-        // Check if the password is correct
-        if (!userService.isPasswordCorrect(password, user.getPassword())) {
-            logger.error("Invalid password");
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        // Generate a JWT token for the user
-        String token = jwtService.generateToken(user);
-
-        // Return the token in the response's body
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-
-        logger.info("User logged in successfully, JWT token generated");
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> exchangeCodeForTokens(@RequestBody Map<String, String> requestBody) {
+        logger.info("Attempting to exchange code for tokens");
         String code = requestBody.get("code");
-    
+
         if (code == null) {
+            logger.error("Code is required");
             return ResponseEntity.badRequest().body(Map.of("error", "Code is required"));
         }
-    
-        // Prepare the request body for exchanging the code for tokens using MultiValueMap
+        logger.info("Received code");
+
+        // Prepare the request body for exchanging the code for tokens using
+        // MultiValueMap
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("code", code);
         body.add("redirect_uri", redirectUri);
         body.add("client_id", clientId);
         body.add("client_secret", clientSecret);
-    
-        // Create the headers (Cognito expects application/x-www-form-urlencoded content type)
+
+        // Create the headers (Cognito expects application/x-www-form-urlencoded content
+        // type)
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-    
+
         // Build the form-encoded data
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(tokenEndpoint);
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
-    
+
         try {
             // Make the POST request to exchange the code for tokens
+            logger.info("Exchanging code for tokens (making request to Cognito)");
             ResponseEntity<Map> response = restTemplate.exchange(
                     uriBuilder.toUriString(),
                     HttpMethod.POST,
                     requestEntity,
-                    Map.class
-            );
-    
+                    Map.class);
+
             // Extract tokens from the response body
             Map<String, String> responseBody = response.getBody();
             if (responseBody != null) {
+                logger.info("Successfully retrieved tokens");
+                String accessToken = responseBody.get("access_token");
+                String refreshToken = responseBody.get("refresh_token");
                 String idToken = responseBody.get("id_token");
-    
+
+                // Decode the idToken to extract claims
+                DecodedJWT decodedJWT = JWT.decode(idToken);
+                String cognitoUsername = decodedJWT.getClaim("cognito:username").asString();
+
                 // Return the tokens in the response
                 Map<String, String> tokens = new HashMap<>();
-                tokens.put("idToken", idToken);
+                tokens.put("accessToken", accessToken);
+                tokens.put("refreshToken", refreshToken);
+                tokens.put("username", cognitoUsername);
 
                 // Add CORS headers to the response
                 HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.add("Access-Control-Allow-Origin", "*"); // Allow the frontend to access the response
-                responseHeaders.add("Access-Control-Allow-Credentials", "true"); // Allow cookies and credentials in cross-origin requests
-    
+                responseHeaders.add("Access-Control-Allow-Credentials", "true"); // Allow cookies and credentials in
+                                                                                 // cross-origin requests
+
                 return ResponseEntity.ok(tokens);
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to retrieve tokens"));
+                logger.error("Failed to retrieve tokens");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("error", "Failed to retrieve tokens"));
             }
-    
+
         } catch (Exception e) {
             // Handle any errors during the exchange
+            logger.error("Failed to exchange code for tokens", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
     }

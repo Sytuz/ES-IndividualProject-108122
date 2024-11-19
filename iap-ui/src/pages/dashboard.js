@@ -98,7 +98,7 @@ const Dashboard = () => {
 
     // Function to fetch tasks from the API
     const fetchTasks = async (page = 0, size = 6, sort = 'id,desc') => {
-        const token = Cookies.get('idToken');
+        const token = Cookies.get('accessToken');
         try {
             const queryParams = `page=${page}&size=${size}&sort=${sortOption}${filterStatus ? `&status=${filterStatus}` : ''}${filterCategory ? `&categoryId=${filterCategory}` : ''}`;
             const response = await fetch(`${API_URL}/tasks?${queryParams}`, {
@@ -119,7 +119,7 @@ const Dashboard = () => {
 
     // Function to fetch categories from the API
     const fetchCategories = async (page = 0, size = 6) => {
-        const token = Cookies.get('idToken');
+        const token = Cookies.get('accessToken');
         try {
             const queryParams = `page=${page}&size=${size}&sort=id,desc`;
             const response = await fetch(`${API_URL}/categories?${queryParams}`, {
@@ -142,12 +142,11 @@ const Dashboard = () => {
     useEffect(() => {
         fetchCategories();
         fetchTasks();
-        const token = Cookies.get('idToken');
+        const token = Cookies.get('accessToken');
         if (!token) {
             router.push('/');
         }
-        const decodedToken = jwtDecode(token);
-        setUsername(decodedToken['cognito:username']);
+        setUsername(Cookies.get('username'));
     }, [sortOption, filterStatus, filterCategory]);
 
     const handleSortChange = (newSortOption) => {
@@ -165,7 +164,7 @@ const Dashboard = () => {
 
     {/* Function to edit a category */ }
     const onEditCategory = async (editedCategoryData) => {
-        const token = Cookies.get('idToken');
+        const token = Cookies.get('accessToken');
         console.log('Edited category data:', editedCategoryData);
         try {
             const response = await fetch(`${API_URL}/categories`, {
@@ -202,7 +201,7 @@ const Dashboard = () => {
 
     {/* Function to delete a category */ }
     const onDeleteCategory = async (deleteDTO) => {
-        const token = Cookies.get('idToken');
+        const token = Cookies.get('accessToken');
         try {
             const response = await fetch(`${API_URL}/categories`, {
                 method: 'DELETE',
@@ -238,7 +237,7 @@ const Dashboard = () => {
 
     {/* Function to create a category */ }
     const onCreateCategory = async (newCategoryData) => {
-        const token = Cookies.get('idToken');
+        const token = Cookies.get('accessToken');
         try {
             const response = await fetch(`${API_URL}/categories`, {
                 method: 'POST',
@@ -278,7 +277,7 @@ const Dashboard = () => {
 
     {/* Function to edit a task */ }
     const onEditTask = async (editedTaskData) => {
-        const token = Cookies.get('idToken');
+        const token = Cookies.get('accessToken');
         console.log('Edited task data:', editedTaskData);
         try {
             const response = await fetch(`${API_URL}/tasks`, {
@@ -316,7 +315,7 @@ const Dashboard = () => {
 
     {/* Function to delete a task */ }
     const onDeleteTask = async (id) => {
-        const token = Cookies.get('idToken');
+        const token = Cookies.get('accessToken');
         try {
             const response = await fetch(`${API_URL}/tasks`, {
                 method: 'DELETE',
@@ -351,7 +350,7 @@ const Dashboard = () => {
 
     {/* Function to create a task */ }
     const onCreateTask = async (newTaskData) => {
-        const token = Cookies.get('idToken');
+        const token = Cookies.get('accessToken');
         try {
             const response = await fetch(`${API_URL}/tasks`, {
                 method: 'POST',
