@@ -22,7 +22,11 @@ const CategoryModal = ({ show, onClose, onSave, initialData = {}, isEditMode = f
                 <Modal.Title>{isEditMode ? 'Edit Category' : 'Create Category'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form>
+                <Form
+                    onSubmit={(e) => {
+                        e.preventDefault(); // Prevent page refresh
+                        handleSave(); // Trigger save functionality
+                    }}>
                     <Form.Group controlId="formCategoryTitle">
                         <Form.Label>Title</Form.Label>
                         <Form.Control

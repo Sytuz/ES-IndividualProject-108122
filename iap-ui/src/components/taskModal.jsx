@@ -37,7 +37,11 @@ const TaskModal = ({ show, onClose, onSave, initialData, categories, isEditMode 
                 <Modal.Title>{isEditMode ? 'Edit Task' : 'Create Task'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form>
+                <Form
+                    onSubmit={(e) => {
+                        e.preventDefault(); // Prevent page refresh
+                        handleSave(); // Trigger save functionality
+                    }}>
                     <Form.Group controlId="formTaskTitle">
                         <Form.Label>Title</Form.Label>
                         <Form.Control
