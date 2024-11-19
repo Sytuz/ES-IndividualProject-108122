@@ -74,10 +74,10 @@ const Dashboard = () => {
 
     const sortOptionToText = {
         'id,desc': 'None',
-        'priority,desc': 'Priority',
-        'deadline,desc': 'Deadline',
-        'creationDate,desc': 'Creation Date',
-        'completionStatus,desc': 'Completion Status',
+        'priority,asc': 'Priority',
+        'deadline,asc': 'Deadline',
+        'createdAt,desc': 'Creation Date',
+        'completionStatus,asc': 'Completion Status',
     };
 
     const filterStatusToText = {
