@@ -48,6 +48,7 @@ public class CategoryController {
     @Operation(summary = "Get user categories", description = "Retrieves all categories for the authenticated user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Category.class))),
+            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
     @GetMapping
@@ -57,9 +58,7 @@ public class CategoryController {
             Pageable pageable) {
 
         String userSub = jwt.getClaim("sub");
-        String userName = jwt.getClaim("username");
-
-        logger.info("Attempting to retrieve categories for user: {} ({})", userName, userSub);
+        logger.info("Attempting to retrieve categories for user: {}", userSub);
 
         Page<Category> categories = categoryService.findAllByUserSub(userSub, pageable);
         return ResponseEntity.ok(categories);
@@ -69,6 +68,7 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successful creation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
             @ApiResponse(responseCode = "400", description = "Invalid category data"),
+            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
     @PostMapping
@@ -78,9 +78,7 @@ public class CategoryController {
             @RequestBody Category category) {
         
         String userSub = jwt.getClaim("sub");
-        String userName = jwt.getClaim("username");
-
-        logger.info("Attempting to create a new category for user: {} ({})", userName, userSub);
+        logger.info("Attempting to create a new category for user: {}", userSub);
 
         category.setUserSub(userSub);
         Category newCategory = categoryService.save(category);
@@ -96,6 +94,7 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successful deletion"),
             @ApiResponse(responseCode = "400", description = "Invalid category data"),
+            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
     @DeleteMapping
@@ -105,9 +104,7 @@ public class CategoryController {
             @RequestBody CategoryDelDTO categoryDelDTO) {
         
         String userSub = jwt.getClaim("sub");
-        String userName = jwt.getClaim("username");
-        
-        logger.info("Attempting to delete category for user: {} ({})", userName, userSub);
+        logger.info("Attempting to delete category for user: {}", userSub);
 
         Category category = categoryService.findById(categoryDelDTO.getId());
         if (category == null || !category.getUserSub().equals(userSub)) {
@@ -122,6 +119,7 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful edit", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
             @ApiResponse(responseCode = "400", description = "Invalid category data"),
+            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
             @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
     })
     @PutMapping
@@ -131,9 +129,7 @@ public class CategoryController {
             @RequestBody Category category) {
 
         String userSub = jwt.getClaim("sub");
-        String userName = jwt.getClaim("username");        
-        
-        logger.info("Attempting to edit category for user: {} ({})", userName, userSub);
+        logger.info("Attempting to edit category for user: {}", userSub);
 
         if (category.getId() == null) {
             return ResponseEntity.badRequest().build();

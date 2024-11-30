@@ -16,7 +16,7 @@ public class CategoryService {
     private int minTitleLength = 3;
     private int maxTitleLength = 50;
     private int maxDescriptionLength = 255;
-    
+
     private CategoryRepository categoryRepository;
 
     private TaskService taskService;
@@ -34,8 +34,7 @@ public class CategoryService {
     public void delete(Long id, boolean deleteTasks) {
         if (deleteTasks) {
             taskService.deleteByCategoryId(id);
-        }
-        else {
+        } else {
             taskService.updateCategoryToNullByCategoryId(id);
         }
         categoryRepository.deleteById(id);
@@ -45,10 +44,26 @@ public class CategoryService {
         return categoryRepository.existsById(id);
     }
 
+    public boolean categoryExistsByUserSubAndTitle(String sub, String title) {
+        return categoryRepository.existsByUserSubAndTitle(sub, title);
+    }
+
     public boolean isCategoryValid(Category category) {
-        return (category.getTitle() == null || (category.getTitle().length() >= minTitleLength &&
-            category.getTitle().length() <= maxTitleLength)) &&
-            (category.getDescription() == null || category.getDescription().length() <= maxDescriptionLength);
+        if (category.getTitle() == null || category.getTitle().equalsIgnoreCase("None")
+                || category.getTitle().equalsIgnoreCase("All")) {
+            return false; // Explicitly reject null or invalid titles
+        }
+
+        if (categoryExistsByUserSubAndTitle(category.getUserSub(), category.getTitle())) {
+            return false; // Reject duplicate titles
+        }
+
+        boolean isTitleValid = category.getTitle().length() > minTitleLength
+                && category.getTitle().length() < maxTitleLength;
+        boolean isDescriptionValid = category.getDescription() == null
+                || category.getDescription().length() <= maxDescriptionLength;
+
+        return isTitleValid && isDescriptionValid; // Both conditions must be satisfied
     }
 
     public Category save(Category category) {

@@ -1,25 +1,32 @@
-// src/components/CategoryModal.js
-
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-const CategoryModal = ({ show, onClose, onSave, initialData = {} }) => {
-    const [id, setId] = useState(initialData.id || null);
+const CategoryModal = ({ show, onClose, onSave, initialData = {}, isEditMode = false }) => {
     const [title, setTitle] = useState(initialData.title || '');
     const [description, setDescription] = useState(initialData.description || '');
 
+    // Update modal state when initialData changes (reset fields)
+    useEffect(() => {
+        setTitle(initialData.title || '');
+        setDescription(initialData.description || '');
+    }, [initialData]);
+
     const handleSave = () => {
-        onSave({ id, title, description });
+        onSave({ id: initialData.id || null, title, description });
         onClose();
     };
 
     return (
         <Modal show={show} onHide={onClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>{initialData ? 'Edit Category' : 'Create Category'}</Modal.Title>
+            <Modal.Header className="py-2" closeButton>
+                <Modal.Title>{isEditMode ? 'Edit Category' : 'Create Category'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form>
+                <Form
+                    onSubmit={(e) => {
+                        e.preventDefault(); // Prevent page refresh
+                        handleSave(); // Trigger save functionality
+                    }}>
                     <Form.Group controlId="formCategoryTitle">
                         <Form.Label>Title</Form.Label>
                         <Form.Control
@@ -27,7 +34,7 @@ const CategoryModal = ({ show, onClose, onSave, initialData = {} }) => {
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             isInvalid={title.length <= 3}
-                            />
+                        />
                         <Form.Control.Feedback type="invalid">
                             Title must be longer than 3 characters.
                         </Form.Control.Feedback>
@@ -47,8 +54,8 @@ const CategoryModal = ({ show, onClose, onSave, initialData = {} }) => {
                 <Button variant="secondary" onClick={onClose}>
                     Cancel
                 </Button>
-                <Button variant="primary" onClick={handleSave}>
-                    Save Changes
+                <Button variant="primary" onClick={handleSave} disabled={title.length <= 3}>
+                    {isEditMode ? 'Save Changes' : 'Create Category'}
                 </Button>
             </Modal.Footer>
         </Modal>

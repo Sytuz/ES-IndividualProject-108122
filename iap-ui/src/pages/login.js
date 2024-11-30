@@ -21,10 +21,12 @@ const Login = () => {
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    const { idToken } = data;
+                    const { accessToken, refreshToken, username } = data;
 
                     // Store tokens in cookies
-                    Cookies.set('idToken', idToken, { expires: 7, secure: true, sameSite: 'Strict' });
+                    Cookies.set('accessToken', accessToken, { expires: 7, secure: true, sameSite: 'Strict' });
+                    Cookies.set('refreshToken', refreshToken, { expires: 7, secure: true, sameSite: 'Strict' });
+                    Cookies.set('username', username, { expires: 7, secure: true, sameSite: 'Strict' });
 
                     // Redirect to authenticated dashboard
                     router.push('/dashboard');

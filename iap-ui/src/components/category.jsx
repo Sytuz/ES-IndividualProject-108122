@@ -40,6 +40,7 @@ const Category = ({ id, title, description, onEdit, onDelete }) => {
                 onClose={() => setShowEditModal(false)}
                 onSave={handleEdit}
                 initialData={{ id, title, description }} // Pass initial data for editing
+                isEditMode={true}
             />
 
             {/* Delete Modal */}
