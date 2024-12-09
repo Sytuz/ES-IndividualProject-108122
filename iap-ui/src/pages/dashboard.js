@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
+
+import { API_URL } from '../components/api_url';
+
 import Navbar from '@/components/navbar';
 import Task from '@/components/task';
 import Category from '@/components/category';
-import { useRouter } from 'next/router';
-import { API_URL } from '../../api_url';
+import Toasts from '@/components/toasts';
+
 import TaskModal from '@/components/TaskModal';
 import CategoryModal from '@/components/CategoryModal';
+
 import Cookies from 'js-cookie';  // Import js-cookie
-import { jwtDecode } from "jwt-decode";
-import Toasts from '@/components/toasts';
 
 const Dashboard = () => {
     const router = useRouter();
@@ -45,7 +48,6 @@ const Dashboard = () => {
             deadline: '',
             category: null,
         });
-        console.log('reset task data:', taskData);
         setShowTaskCreateModal(true);
     };
 
@@ -97,7 +99,7 @@ const Dashboard = () => {
 
 
     // Function to fetch tasks from the API
-    const fetchTasks = async (page = 0, size = 6, sort = 'id,desc') => {
+    const fetchTasks = useCallback(async (page = 0, size = 6, sort = 'id,desc') => {
         const token = Cookies.get('accessToken');
         try {
             const queryParams = `page=${page}&size=${size}&sort=${sortOption}${filterStatus ? `&status=${filterStatus}` : ''}${filterCategory ? `&categoryId=${filterCategory}` : ''}`;
@@ -119,10 +121,10 @@ const Dashboard = () => {
             console.error('Error fetching tasks:', error);
             throw error;
         }
-    };
+    }, [router, sortOption, filterStatus, filterCategory]);
 
     // Function to fetch categories from the API
-    const fetchCategories = async (page = 0, size = 6) => {
+    const fetchCategories = useCallback(async (page = 0, size = 6) => {
         const token = Cookies.get('accessToken');
         try {
             const queryParams = `page=${page}&size=${size}&sort=id,desc`;
@@ -144,7 +146,7 @@ const Dashboard = () => {
             console.error('Error fetching categories:', error);
             throw error;
         }
-    };
+    }, [router]);
 
     {/* Fetch all tasks from the API on component mount */ }
     useEffect(() => {
@@ -155,7 +157,7 @@ const Dashboard = () => {
             router.push('/');
         }
         setUsername(Cookies.get('username'));
-    }, [sortOption, filterStatus, filterCategory]);
+    }, [sortOption, filterStatus, filterCategory, fetchCategories, fetchTasks, router]);
 
     const handleSortChange = (newSortOption) => {
         setSortOption(newSortOption);
@@ -502,7 +504,7 @@ const Dashboard = () => {
                                     {/* Display a message if there are no tasks */}
                                     {tasks && tasks.length === 0 && (
                                         <div className="text-center text-muted fst-italic">
-                                            Create new tasks by clicking the 'New Task' button below
+                                            Create new tasks by clicking the &apos;New Task&apos; button below
                                         </div>
                                     )}
 
@@ -537,7 +539,7 @@ const Dashboard = () => {
                                     )}
                                 </div>
                             </div>
-                            <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => handleNewTask()}>
+                            <button className="btn text-white tt-bgcolor mt-2 align-self-end mb-2" onClick={() => handleNewTask()}>
                                 <span className="me-2">+</span>New Task
                             </button>
                             <TaskModal
@@ -559,7 +561,7 @@ const Dashboard = () => {
                                     {/* Display a message if there are no categories */}
                                     {categories && categories.length === 0 && (
                                         <div className="text-center text-muted fst-italic">
-                                            Create new categories by clicking the 'New Category' button below
+                                            Create new categories by clicking the &apos;New Category&apos; button below
                                         </div>
                                     )}
                                     {categories && categories.map(category => (
@@ -586,7 +588,7 @@ const Dashboard = () => {
                                     )}
                                 </div>
                             </div>
-                            <button className="btn text-white tt-bgcolor mt-2 align-self-end" onClick={() => handleNewCategory()}>
+                            <button className="btn text-white tt-bgcolor mt-2 align-self-end mb-2" onClick={() => handleNewCategory()}>
                                 <span className="me-2">+</span>New Category
                             </button>
                             <CategoryModal

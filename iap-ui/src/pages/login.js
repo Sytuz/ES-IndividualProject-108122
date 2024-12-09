@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import Cookies from 'js-cookie'; // Import js-cookie
-import { API_URL } from '../../api_url';
+import { API_URL } from '../components/api_url';
 
 const Login = () => {
     const router = useRouter();
@@ -33,7 +33,7 @@ const Login = () => {
                 })
                 .catch(error => console.error("Token exchange failed", error));
         }
-    }, [router.query]);
+    }, [router.query, router]);
 
     return (
         <div style={styles.container}>
