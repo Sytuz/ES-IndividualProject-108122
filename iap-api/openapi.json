@@ -1,0 +1,515 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "OpenAPI definition",
+        "version": "v0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Generated server url"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Tasks Controller",
+            "description": "API for managing tasks, requires authentication"
+        },
+        {
+            "name": "Categories Controller",
+            "description": "API for managing categories, requires authentication"
+        },
+        {
+            "name": "Authentication Controller",
+            "description": "Public API for managing user authentication"
+        }
+    ],
+    "paths": {
+        "/api/tasks": {
+            "get": {
+                "tags": [
+                    "Tasks Controller"
+                ],
+                "summary": "Get user tasks",
+                "description": "Retrieves all tasks for the authenticated user according to given filters",
+                "operationId": "getTasks",
+                "parameters": [
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "categoryId",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Invalid token or user not found"
+                    },
+                    "200": {
+                        "description": "Successful retrieval",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Task"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token expired"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Tasks Controller"
+                ],
+                "summary": "Edit a user task",
+                "description": "Edits a task for the authenticated user",
+                "operationId": "editTask",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Task"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "403": {
+                        "description": "Invalid token or user not found"
+                    },
+                    "200": {
+                        "description": "Successful edit",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid task data"
+                    },
+                    "401": {
+                        "description": "Token expired"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Tasks Controller"
+                ],
+                "summary": "Create a user task",
+                "description": "Creates a task for the authenticated user",
+                "operationId": "createTask",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Task"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "403": {
+                        "description": "Invalid token or user not found"
+                    },
+                    "201": {
+                        "description": "Successful creation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid task data"
+                    },
+                    "401": {
+                        "description": "Token expired"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Tasks Controller"
+                ],
+                "summary": "Delete a user task",
+                "description": "Deletes a task for the authenticated user",
+                "operationId": "deleteTask",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful deletion"
+                    },
+                    "403": {
+                        "description": "Invalid token or user not found"
+                    },
+                    "400": {
+                        "description": "Invalid task data"
+                    },
+                    "401": {
+                        "description": "Token expired"
+                    }
+                }
+            }
+        },
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Categories Controller"
+                ],
+                "summary": "Get user categories",
+                "description": "Retrieves all categories for the authenticated user according to given filters",
+                "operationId": "getCategories",
+                "parameters": [
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Invalid token or user not found"
+                    },
+                    "200": {
+                        "description": "Successful retrieval",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Category"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token expired"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Categories Controller"
+                ],
+                "summary": "Edit a user category",
+                "description": "Edits a category for the authenticated user",
+                "operationId": "editCategory",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Category"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Invalid category data"
+                    },
+                    "403": {
+                        "description": "Invalid token or user not found"
+                    },
+                    "200": {
+                        "description": "Successful edit",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token expired"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Categories Controller"
+                ],
+                "summary": "Create a user category",
+                "description": "Creates a category for the authenticated user",
+                "operationId": "createCategory",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Category"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Invalid category data"
+                    },
+                    "403": {
+                        "description": "Invalid token or user not found"
+                    },
+                    "201": {
+                        "description": "Successful creation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token expired"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Categories Controller"
+                ],
+                "summary": "Delete a user category",
+                "description": "Deletes a category for the authenticated user",
+                "operationId": "deleteCategory",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CategoryDelDTO"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Invalid category data"
+                    },
+                    "204": {
+                        "description": "Successful deletion"
+                    },
+                    "403": {
+                        "description": "Invalid token or user not found"
+                    },
+                    "401": {
+                        "description": "Token expired"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication Controller"
+                ],
+                "summary": "Login a user",
+                "description": "Login a user and return access and refresh tokens",
+                "operationId": "exchangeCodeForTokens",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginDTO"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokensDTO"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token exchange failed"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Category": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "userSub": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Task": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "userSub": {
+                        "type": "string"
+                    },
+                    "priority": {
+                        "type": "string",
+                        "enum": [
+                            "UNDEFINED",
+                            "LOW",
+                            "MEDIUM",
+                            "HIGH"
+                        ]
+                    },
+                    "completionStatus": {
+                        "type": "string",
+                        "enum": [
+                            "IDLE",
+                            "ONGOING",
+                            "COMPLETED"
+                        ]
+                    },
+                    "deadline": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "completedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/Category"
+                    }
+                }
+            },
+            "LoginDTO": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TokensDTO": {
+                "type": "object",
+                "properties": {
+                    "accessToken": {
+                        "type": "string"
+                    },
+                    "refreshToken": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Pageable": {
+                "type": "object",
+                "properties": {
+                    "page": {
+                        "minimum": 0,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "size": {
+                        "minimum": 1,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "CategoryDelDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "deleteTasks": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import ua.es.iap_api.dtos.LoginDTO;
+import ua.es.iap_api.dtos.TokensDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -53,13 +55,13 @@ public class AuthenticationController {
 
     @Operation(summary = "Login a user", description = "Login a user and return access and refresh tokens")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successful login", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
-            @ApiResponse(responseCode = "401", description = "Token exchange failed"),
+            @ApiResponse(responseCode = "200", description = "Successful login", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TokensDTO.class))),
+            @ApiResponse(responseCode = "401", description = "Token exchange failed", content = @Content()),
     })
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> exchangeCodeForTokens(@RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<Map<String, String>> exchangeCodeForTokens(@RequestBody LoginDTO requestBody) {
         logger.info("Attempting to exchange code for tokens");
-        String code = requestBody.get("code");
+        String code = requestBody.getCode();
 
         if (code == null) {
             logger.error("Code is required");
