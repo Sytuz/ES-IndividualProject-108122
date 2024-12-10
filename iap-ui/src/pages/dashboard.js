@@ -343,13 +343,12 @@ const Dashboard = () => {
     const onDeleteTask = async (id) => {
         const token = Cookies.get('accessToken');
         try {
-            const response = await fetch(`${API_URL}/tasks`, {
+            const response = await fetch(`${API_URL}/tasks?taskId=${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: id
             });
             if (response.ok) {
                 console.log('Task deleted: ', id);

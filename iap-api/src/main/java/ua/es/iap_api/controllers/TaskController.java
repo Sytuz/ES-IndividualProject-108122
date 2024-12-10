@@ -4,6 +4,7 @@ import ua.es.iap_api.services.TaskService;
 import ua.es.iap_api.entities.Task;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -48,11 +49,11 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @Operation(summary = "Get user tasks", description = "Retrieves all tasks for the authenticated user")
+    @Operation(summary = "Get user tasks", description = "Retrieves all tasks for the authenticated user according to given filters")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
-            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
-            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Task.class)))),
+            @ApiResponse(responseCode = "401", description = "Token expired", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found", content = @Content()),
     })
     @GetMapping
     @PreAuthorize("isAuthenticated()")
@@ -74,9 +75,9 @@ public class TaskController {
     @Operation(summary = "Create a user task", description = "Creates a task for the authenticated user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successful creation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid task data"),
-            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
-            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid task data", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Token expired", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found", content = @Content()),
     })
     @PostMapping
     @PreAuthorize("isAuthenticated()")
@@ -99,15 +100,15 @@ public class TaskController {
     @Operation(summary = "Delete a user task", description = "Deletes a task for the authenticated user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successful deletion"),
-            @ApiResponse(responseCode = "400", description = "Invalid task data"),
-            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
-            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid task data", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Token expired", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found", content = @Content()),
     })
     @DeleteMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteTask(
             @AuthenticationPrincipal Jwt jwt,
-            @RequestBody Long taskId) {
+            @RequestParam Long taskId) {
 
         String userSub = jwt.getClaim("sub");
         logger.info("Attempting to delete task for user: {}", userSub);
@@ -126,9 +127,9 @@ public class TaskController {
     @Operation(summary = "Edit a user task", description = "Edits a task for the authenticated user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful edit", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid task data"),
-            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
-            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid task data", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Token expired", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found", content = @Content()),
     })
     @PutMapping
     @PreAuthorize("isAuthenticated()")

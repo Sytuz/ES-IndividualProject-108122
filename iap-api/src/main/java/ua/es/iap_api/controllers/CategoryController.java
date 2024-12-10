@@ -7,6 +7,7 @@ import ua.es.iap_api.entities.Task;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,11 +46,11 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @Operation(summary = "Get user categories", description = "Retrieves all categories for the authenticated user")
+    @Operation(summary = "Get user categories", description = "Retrieves all categories for the authenticated user according to given filters")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Category.class))),
-            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
-            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Category.class)))),
+            @ApiResponse(responseCode = "401", description = "Token expired", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found", content = @Content()),
     })
     @GetMapping
     @PreAuthorize("isAuthenticated()")
@@ -67,9 +68,9 @@ public class CategoryController {
     @Operation(summary = "Create a user category", description = "Creates a category for the authenticated user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successful creation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid category data"),
-            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
-            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid category data", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Token expired", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found", content = @Content()),
     })
     @PostMapping
     @PreAuthorize("isAuthenticated()")
@@ -93,9 +94,9 @@ public class CategoryController {
     @Operation(summary = "Delete a user category", description = "Deletes a category for the authenticated user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successful deletion"),
-            @ApiResponse(responseCode = "400", description = "Invalid category data"),
-            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
-            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid category data", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Token expired", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found", content = @Content()),
     })
     @DeleteMapping
     @PreAuthorize("isAuthenticated()")
@@ -118,9 +119,9 @@ public class CategoryController {
     @Operation(summary = "Edit a user category", description = "Edits a category for the authenticated user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful edit", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid category data"),
-            @ApiResponse(responseCode = "401", description = "Token expired or invalid"),
-            @ApiResponse(responseCode = "403", description = "Invalid token or user not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid category data", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Token expired", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Invalid token or user not found", content = @Content()),
     })
     @PutMapping
     @PreAuthorize("isAuthenticated()")

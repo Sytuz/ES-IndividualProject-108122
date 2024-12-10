@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import Cookies from 'js-cookie'; // Import js-cookie
 import { API_URL } from '../components/api_url';
+import Head from 'next/head';
 
 const Login = () => {
     const router = useRouter();
@@ -36,10 +37,18 @@ const Login = () => {
     }, [router.query, router]);
 
     return (
-        <div style={styles.container}>
-            <div style={styles.spinner}></div>
-            <p style={styles.message}>Authenticating... Please wait.</p>
-        </div>
+        <>
+            <Head>
+                <title>Authenticating...</title>
+                <meta name="description" content="Task tracker application" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+            <div style={styles.container}>
+                <div style={styles.spinner}></div>
+                <p style={styles.message}>Authenticating... Please wait.</p>
+            </div>
+        </>
     );
 };
 
