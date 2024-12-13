@@ -1,11 +1,11 @@
 const NavbarLanding = () => {
 
   const handleLogin = () => {
-    window.location.href = "https://tasktracker.auth.eu-south-2.amazoncognito.com/login?response_type=code&client_id=66v9ved46iqmn4ffs9saan6kc&redirect_uri=http://localhost:3000/login";
+    window.location.href = "https://tasktracker.auth.eu-south-2.amazoncognito.com/login?response_type=code&client_id=66v9ved46iqmn4ffs9saan6kc&redirect_uri=https://tasktracker.d2tu436vk3fvmm.amplifyapp.com/login";
   };
 
   const handleRegister = () => {
-    window.location.href = "https://tasktracker.auth.eu-south-2.amazoncognito.com/signup?response_type=code&client_id=66v9ved46iqmn4ffs9saan6kc&redirect_uri=http://localhost:3000/login";
+    window.location.href = "https://tasktracker.auth.eu-south-2.amazoncognito.com/signup?response_type=code&client_id=66v9ved46iqmn4ffs9saan6kc&redirect_uri=https://tasktracker.d2tu436vk3fvmm.amplifyapp.com/login";
   };
 
   return (

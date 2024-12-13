@@ -8,7 +8,7 @@ export default function Home() {
   const handleGettingStarted = () => {
     // Make sure this runs only on the client-side
     if (typeof window !== "undefined") {
-      window.location.href = "https://tasktracker.auth.eu-south-2.amazoncognito.com/signup?response_type=code&client_id=66v9ved46iqmn4ffs9saan6kc&redirect_uri=http://localhost:3000/login";
+        window.location.href = "https://tasktracker.auth.eu-south-2.amazoncognito.com/signup?response_type=code&client_id=66v9ved46iqmn4ffs9saan6kc&redirect_uri=https://tasktracker.d2tu436vk3fvmm.amplifyapp.com/login";
     }
   };  
 
