@@ -12,6 +12,10 @@
     ],
     "tags": [
         {
+            "name": "Health Controller",
+            "description": "Health check endpoint"
+        },
+        {
             "name": "Tasks Controller",
             "description": "API for managing tasks, requires authentication"
         },
@@ -61,6 +65,9 @@
                     }
                 ],
                 "responses": {
+                    "401": {
+                        "description": "Token expired"
+                    },
                     "403": {
                         "description": "Invalid token or user not found"
                     },
@@ -76,9 +83,6 @@
                                 }
                             }
                         }
-                    },
-                    "401": {
-                        "description": "Token expired"
                     }
                 }
             },
@@ -100,8 +104,14 @@
                     "required": true
                 },
                 "responses": {
+                    "401": {
+                        "description": "Token expired"
+                    },
                     "403": {
                         "description": "Invalid token or user not found"
+                    },
+                    "400": {
+                        "description": "Invalid task data"
                     },
                     "200": {
                         "description": "Successful edit",
@@ -112,12 +122,6 @@
                                 }
                             }
                         }
-                    },
-                    "400": {
-                        "description": "Invalid task data"
-                    },
-                    "401": {
-                        "description": "Token expired"
                     }
                 }
             },
@@ -139,9 +143,6 @@
                     "required": true
                 },
                 "responses": {
-                    "403": {
-                        "description": "Invalid token or user not found"
-                    },
                     "201": {
                         "description": "Successful creation",
                         "content": {
@@ -152,11 +153,14 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid task data"
-                    },
                     "401": {
                         "description": "Token expired"
+                    },
+                    "403": {
+                        "description": "Invalid token or user not found"
+                    },
+                    "400": {
+                        "description": "Invalid task data"
                     }
                 }
             },
@@ -182,14 +186,14 @@
                     "204": {
                         "description": "Successful deletion"
                     },
+                    "401": {
+                        "description": "Token expired"
+                    },
                     "403": {
                         "description": "Invalid token or user not found"
                     },
                     "400": {
                         "description": "Invalid task data"
-                    },
-                    "401": {
-                        "description": "Token expired"
                     }
                 }
             }
@@ -213,6 +217,9 @@
                     }
                 ],
                 "responses": {
+                    "401": {
+                        "description": "Token expired"
+                    },
                     "403": {
                         "description": "Invalid token or user not found"
                     },
@@ -228,9 +235,6 @@
                                 }
                             }
                         }
-                    },
-                    "401": {
-                        "description": "Token expired"
                     }
                 }
             },
@@ -252,11 +256,14 @@
                     "required": true
                 },
                 "responses": {
-                    "400": {
-                        "description": "Invalid category data"
+                    "401": {
+                        "description": "Token expired"
                     },
                     "403": {
                         "description": "Invalid token or user not found"
+                    },
+                    "400": {
+                        "description": "Invalid category data"
                     },
                     "200": {
                         "description": "Successful edit",
@@ -267,9 +274,6 @@
                                 }
                             }
                         }
-                    },
-                    "401": {
-                        "description": "Token expired"
                     }
                 }
             },
@@ -291,12 +295,6 @@
                     "required": true
                 },
                 "responses": {
-                    "400": {
-                        "description": "Invalid category data"
-                    },
-                    "403": {
-                        "description": "Invalid token or user not found"
-                    },
                     "201": {
                         "description": "Successful creation",
                         "content": {
@@ -309,6 +307,12 @@
                     },
                     "401": {
                         "description": "Token expired"
+                    },
+                    "403": {
+                        "description": "Invalid token or user not found"
+                    },
+                    "400": {
+                        "description": "Invalid category data"
                     }
                 }
             },
@@ -330,17 +334,17 @@
                     "required": true
                 },
                 "responses": {
-                    "400": {
-                        "description": "Invalid category data"
-                    },
                     "204": {
                         "description": "Successful deletion"
+                    },
+                    "401": {
+                        "description": "Token expired"
                     },
                     "403": {
                         "description": "Invalid token or user not found"
                     },
-                    "401": {
-                        "description": "Token expired"
+                    "400": {
+                        "description": "Invalid category data"
                     }
                 }
             }
@@ -376,6 +380,28 @@
                     },
                     "401": {
                         "description": "Token exchange failed"
+                    }
+                }
+            }
+        },
+        "/api/health": {
+            "get": {
+                "tags": [
+                    "Health Controller"
+                ],
+                "summary": "Health Check",
+                "description": "Returns a simple health check response",
+                "operationId": "healthCheck",
+                "responses": {
+                    "200": {
+                        "description": "Health check successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HealthCheckResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -495,6 +521,14 @@
                         "items": {
                             "type": "string"
                         }
+                    }
+                }
+            },
+            "HealthCheckResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
                     }
                 }
             },
