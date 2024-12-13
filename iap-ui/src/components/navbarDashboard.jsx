@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 const NavbarDashboard = ({ username }) => {
   const handleLogout = () => {
-    window.location.href = "https://tasktracker.auth.eu-south-2.amazoncognito.com/logout?client_id=66v9ved46iqmn4ffs9saan6kc&logout_uri=http://localhost:3000";
+    window.location.href = "https://tasktracker.auth.eu-south-2.amazoncognito.com/logout?client_id=66v9ved46iqmn4ffs9saan6kc&logout_uri=https://tasktracker.d2tu436vk3fvmm.amplifyapp.com/";
   };
 
   return (
