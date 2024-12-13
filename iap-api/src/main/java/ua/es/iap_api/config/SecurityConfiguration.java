@@ -29,7 +29,7 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/index.html", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll() // Allow access to Swagger UI
-                        .requestMatchers("/api/auth/**").permitAll() // Expose public part of the API
+                        .requestMatchers("/api/auth/**", "/api/health").permitAll() // Expose public part of the API
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow OPTIONS preflight requests
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2.defaultSuccessUrl("/"))
@@ -43,7 +43,7 @@ public class SecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.addAllowedOriginPattern("*");
         configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Access-Control-Allow-Origin"));
 

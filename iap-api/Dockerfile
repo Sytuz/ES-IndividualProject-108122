@@ -1,11 +1,6 @@
-FROM maven:3.8.5-openjdk-17
-
-WORKDIR /iap-api
-
-COPY . .
-
+# Production stage
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY target/iap-api-1.0.1.jar app.jar
 EXPOSE 8080
-
-RUN mvn install -DskipTests
-
-CMD ["mvn", "spring-boot:run"]
+CMD ["java", "-jar", "app.jar"]
