@@ -9,9 +9,5 @@ This project revolves around the creation of a simple To-Do list application, wh
 - **Database**: PostgreSQL
 - **Deployment**: AWS
 
-## Data Model
-The data model is composed of three entities: 'User', 'Task' and 'Category'.
-![Data Model](./docs/ES-IAP-DataModel.png)
-
 ## Made By
 **Alexandre Pedro Ribeiro** - **108122**
