@@ -1,0 +1,112 @@
+.rounded-pill {
+  border-radius: 5px !important;
+}
+
+.tt-color {
+  color: rgb(253, 35, 78) !important;
+}
+
+.tt-bgcolor {
+  background-color: rgb(253, 35, 78) !important;
+}
+
+.btn-outline-tt-color {
+  color: rgb(253, 35, 78) !important;
+  border: 1px solid rgb(253, 35, 78) !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-tt-color:hover {
+  background-color: rgb(253, 35, 78) !important;
+  color: white !important;
+}
+
+.tt-secondary {
+  color: #c6c9cc !important;
+}
+
+.tt-bg-secondary {
+  background-color: #c6c9cc !important;
+}
+
+.start-20 {
+  left: 20% !important;
+}
+
+.top-40 {
+  top: 40% !important;
+}
+
+.image-bg {
+  padding: 40px;
+  border-radius: 20%;
+  display: inline-block;
+  width: 180px;
+  height: 180px;
+}
+
+/* Hover effect for "Get Started" */
+.get-started-btn:hover {
+  background-color: rgb(219, 32, 70) !important; /* Darker color on hover */
+  transform: scale(1.05); /* Enlarge slightly */
+}
+
+/* Transition effect for Login and Register buttons */
+.login-button:hover {
+  background-color: rgb(219, 32, 70) !important; /* Darker color on hover for Login/Register */
+}
+
+.register-button:hover {
+  background-color: #eeeeee !important; /* Darker color on hover for Login/Register */
+}
+
+/* Ensure smooth transition for all buttons */
+.login-button, .register-button, .get-started-btn {
+  transition: all 0.3s ease;
+}
+
+.darkbg {
+  background-color: #dddddd !important;
+}
+
+.task-item {
+  transition: transform 0.2s;
+}
+
+.task-item:hover {
+  transform: scale(1.02);
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.dropdown-item {
+  transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+  color: #333;
+  transform: scale(1.05); /* Slightly scale up the item */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow */
+}
+
+.navbar-nav {
+  display: flex; /* Ensure children stay in a row */
+  flex-direction: row; /* Explicitly set the direction to row */
+  align-items: center; /* Align items vertically */
+  justify-content: flex-end; /* Push items to the right */
+  gap: 1rem; /* Add space between items */
+}
+
+.card-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}

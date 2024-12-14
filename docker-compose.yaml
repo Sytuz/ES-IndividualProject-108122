@@ -1,0 +1,63 @@
+services:
+  postgresql:
+    image: postgres:16
+    container_name: postgresql
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "localhost", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - all
+
+  api:
+    image: iap-api:latest
+    container_name: api
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:${POSTGRES_PORT}/${POSTGRES_DB}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update 
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+    networks:
+      - all
+
+  nextjs:
+    image: iap-ui:latest
+    container_name: nextjs
+    restart: always
+    depends_on:
+      - api
+    ports:
+      - 3000:3000
+    networks:
+      - all
+
+volumes:
+  postgres_data:
+
+networks:
+  all:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.1.0.0/16
